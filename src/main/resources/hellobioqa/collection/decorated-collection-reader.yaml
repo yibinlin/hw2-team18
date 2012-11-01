@@ -1,0 +1,8 @@
+inherit: fs.fs-collection-reader
+  
+decorators: |
+  - inherit: hellobioqa.collection.keyterm-gs-decorator
+  - inherit: hellobioqa.collection.passage-gs-decorator
+
+persistence-provider: |
+  inherit: helloqa.db.local-persistence-provider

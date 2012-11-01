@@ -1,0 +1,7 @@
+class: edu.cmu.lti.oaqa.openqa.hello.retrieval.SimpleSolrRetrievalStrategist
+hit-list-size: 10
+server: http://peace.isri.cs.cmu.edu:9080/solr/genomics-simple/
+port: 9080
+
+persistence-provider: |
+  inherit: ecd.default-log-persistence-provider
