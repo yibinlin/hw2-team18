@@ -1,4 +1,6 @@
 *.class
+data/oaqa-eval.db3
+target/*
 
 # Package Files #
 *.jar
