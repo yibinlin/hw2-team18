@@ -1,13 +1,15 @@
 package edu.cmu.lti.oaqa.openqa.test.team18.keyterm;
 
 import java.util.*;
+import java.util.Map.Entry;
 
+import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.*;
 import edu.stanford.nlp.pipeline.*;
 import edu.stanford.nlp.util.*;
 
-public class KeytermExtractorHW2 {
+public class KeytermExtractorHW2 extends AbstractKeytermExtractor{
   private StanfordCoreNLP pipeline;
 
   public KeytermExtractorHW2() {
@@ -42,5 +44,17 @@ public class KeytermExtractorHW2 {
       }
     }
     return begin2end;
+  }
+
+  @Override
+  protected List<Keyterm> getKeyterms(String question) {
+    List<Keyterm> kl = new LinkedList<Keyterm>();
+    Keyterm kt = new Keyterm();
+    Map<Integer, Integer> bd = new HashMap<Integer, Integer>();
+    bd=getGeneSpans(question);
+    Map.Entry<Integer, Integer> mp = (Entry<Integer, Integer>)bd;
+    kt.setComponentId(question.substring(mp.getKey(),mp.getValue()));
+    kl.add(kt);
+    return kl;
   }
 }
