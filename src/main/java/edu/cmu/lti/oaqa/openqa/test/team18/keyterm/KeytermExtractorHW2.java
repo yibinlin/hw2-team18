@@ -53,9 +53,13 @@ public class KeytermExtractorHW2 extends AbstractKeytermExtractor{
     Keyterm kt = new Keyterm();
     Map<Integer, Integer> bd = new HashMap<Integer, Integer>();
     bd=getGeneSpans(question);
-    Map.Entry<Integer, Integer> mp = (Entry<Integer, Integer>)bd;
-    kt.setComponentId(question.substring(mp.getKey(),mp.getValue()));
-    kl.add(kt);
+    Iterator<Entry<Integer, Integer>> it = bd.entrySet().iterator();
+    while (it.hasNext()){
+      @SuppressWarnings("unchecked")
+      Map.Entry<Integer, Integer> mp = (Entry<Integer, Integer>)bd;
+      kt.setComponentId(question.substring(mp.getKey(),mp.getValue()));
+      kl.add(kt);
+    }
     return kl;
   }
 }
