@@ -53,4 +53,3 @@ public class SimpleBioPassageExtractor extends SimplePassageExtractor {
   }
 
 }
-//ss

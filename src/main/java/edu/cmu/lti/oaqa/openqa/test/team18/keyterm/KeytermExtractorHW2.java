@@ -1,27 +1,18 @@
-package edu.cmu.lti.oaqa.openqa.test.team18;
+package edu.cmu.lti.oaqa.openqa.test.team18.keyterm;
 
+import java.util.*;
+import java.util.Map.Entry;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.uima.resource.ResourceInitializationException;
-
-import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
+import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.ling.CoreAnnotations.*;
+import edu.stanford.nlp.pipeline.*;
+import edu.stanford.nlp.util.*;
 
-public class PosTagNamedEntityRecognizer {
-
+public class KeytermExtractorHW2 extends AbstractKeytermExtractor{
   private StanfordCoreNLP pipeline;
 
-  public PosTagNamedEntityRecognizer() throws ResourceInitializationException {
+  public KeytermExtractorHW2() {
     Properties props = new Properties();
     props.put("annotators", "tokenize, ssplit, pos");
     pipeline = new StanfordCoreNLP(props);
@@ -53,7 +44,23 @@ public class PosTagNamedEntityRecognizer {
       }
     }
     return begin2end;
+    // how does this work?
   }
-}
 
-//this is a change
+  @Override
+  protected List<Keyterm> getKeyterms(String question) {
+    List<Keyterm> kl = new LinkedList<Keyterm>();
+    Keyterm kt = new Keyterm();
+    Map<Integer, Integer> bd = new HashMap<Integer, Integer>();
+    bd=getGeneSpans(question);
+    Iterator<Entry<Integer, Integer>> it = bd.entrySet().iterator();
+    while (it.hasNext()){
+      @SuppressWarnings("unchecked")
+      Map.Entry<Integer, Integer> mp = (Entry<Integer, Integer>)bd;
+      kt.setComponentId(question.substring(mp.getKey(),mp.getValue()));
+      kl.add(kt);
+    }
+    return kl;
+  }
+
+}
