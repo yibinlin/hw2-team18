@@ -62,4 +62,16 @@ public class KeytermExtractorHW2 extends AbstractKeytermExtractor{
     }
     return kl;
   }
+
+  @Override
+  protected List<Keyterm> getKeyterms(String question) {
+    List<Keyterm> kl = new LinkedList<Keyterm>();
+    Keyterm kt = new Keyterm();
+    Map<Integer, Integer> bd = new HashMap<Integer, Integer>();
+    bd=getGeneSpans(question);
+    Map.Entry<Integer, Integer> mp = (Entry<Integer, Integer>)bd;
+    kt.setComponentId(question.substring(mp.getKey(),mp.getValue()));
+    kl.add(kt);
+    return kl;
+  }
 }
