@@ -15,8 +15,6 @@ import com.aliasi.util.AbstractExternalizable;
 
 import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
-import edu.cmu.lti.se.ner.NERAnnotation;
-import edu.cmu.lti.se.ner.util.StringUtils;
 
 public class HW1YibinExtractor extends AbstractKeytermExtractor {
 
@@ -55,5 +53,7 @@ public class HW1YibinExtractor extends AbstractKeytermExtractor {
 
       keyterms.add(new Keyterm(possibleGene));
     }
+    
+    return keyterms;
   }
 }
