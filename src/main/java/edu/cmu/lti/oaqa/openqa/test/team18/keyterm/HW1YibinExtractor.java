@@ -1,4 +1,4 @@
-package edu.cmu.lti.oaqa.openqa.test.team18;
+package edu.cmu.lti.oaqa.openqa.test.team18.keyterm;
 
 import java.io.File;
 import java.util.ArrayList;

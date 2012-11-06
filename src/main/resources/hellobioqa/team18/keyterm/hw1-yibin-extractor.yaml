@@ -1,4 +1,4 @@
-class: java.edu.cmu.lti.oaqa.openqa.test.team18.HW1YibinExtractor
+class: java.edu.cmu.lti.oaqa.openqa.test.team18.keyterm.HW1YibinExtractor
 
 persistence-provider: |
 inherit: ecd.default-log-persistence-provider
