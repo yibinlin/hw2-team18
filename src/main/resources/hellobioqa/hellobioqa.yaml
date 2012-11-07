@@ -17,6 +17,7 @@ pipeline:
       - inherit: helloqa.keyterm.simple
       - inherit: hellobioqa.team18.keyterm.KeytermExtractorHW
       - inherit: hellobioqa.team18.keyterm.KeytermExtractorHW2
+      - inherit: hellobioqa.team18.keyterm.hw1-yibin-extractor
 
   - inherit: jdbc.sqlite.cse.phase 
     name: retrieval-strategist
