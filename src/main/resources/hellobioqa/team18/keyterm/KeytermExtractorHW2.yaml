@@ -1,4 +1,4 @@
-class java.edu.cmu.lti.oaqa.openqa.test.team18.keyterm.KertermExtractorHW2.java
+class: edu.cmu.lti.oaqa.openqa.test.team18.keyterm.KeytermExtractorHW2
 
 persistence-provider: |
-	inherit: ecd.default-log-persistence-provider
+  inherit: ecd.default-log-persistence-provider

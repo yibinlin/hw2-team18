@@ -1,6 +1,6 @@
 configuration: 
   name: hellobioqa
-  author: oaqa
+  author: team18
   
 persistence-provider:
   inherit: helloqa.db.local-persistence-provider
