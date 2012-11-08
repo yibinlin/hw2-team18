@@ -21,6 +21,7 @@ public class CoreNLPExtractor extends AbstractKeytermExtractor{
 	protected List<Keyterm> getKeyterms(String question) {
 	
 		try {
+			
 			PosTagNamedEntityRecognizer postagger = new PosTagNamedEntityRecognizer();
 			Map<Integer, Integer> begin2end = postagger.getGeneSpans(question);
 			
