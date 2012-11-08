@@ -18,6 +18,7 @@ pipeline:
       #- inherit: hellobioqa.team18.keyterm.KeytermExtractorHW
       #- inherit: hellobioqa.team18.keyterm.KeytermExtractorHW2
       - inherit: hellobioqa.team18.keyterm.hw1-yibin-extractor
+      - inherit: hellobioqa.team18.keyterm.hw2-yuchent-extractor
 
   - inherit: jdbc.sqlite.cse.phase 
     name: retrieval-strategist
