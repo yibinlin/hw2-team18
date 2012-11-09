@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.cmu.lti.11791.f12.hw2</groupId>
   <artifactId>hw2-team18</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <repositories>
     <repository>
       <id>oaqa</id>
@@ -56,7 +56,7 @@
   	<dependency>
   		<groupId>edu.cmu.lti.oaqa.openqa</groupId>
   		<artifactId>helloqa</artifactId>
-  		<version>1.0.1-SNAPSHOT</version>
+  		<version>1.0.1</version>
   	</dependency>
   	<dependency>
   		<groupId>org.jsoup</groupId>
