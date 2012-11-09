@@ -8,6 +8,7 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.*;
 import edu.stanford.nlp.pipeline.*;
 import edu.stanford.nlp.util.*;
+import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 
 public class KeytermExtractorHW2 extends AbstractKeytermExtractor{
   private StanfordCoreNLP pipeline;
