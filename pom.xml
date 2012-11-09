@@ -80,7 +80,7 @@
 </dependency>
   </dependencies>
   <scm>
-  	<connection>scm:git:git://github.com/FJalchemist/hw2-team18.git</connection>
-  	<developerConnection>scm:git:git://github.com/FJalchemist/hw2-team18.git</developerConnection>
+  	<connection>scm:git:git@github.com:FJalchemist/hw2-team18.git</connection>
+  	<developerConnection>scm:git:git@github.com:FJalchemist/hw2-team18.git</developerConnection>
   </scm>
 </project>
