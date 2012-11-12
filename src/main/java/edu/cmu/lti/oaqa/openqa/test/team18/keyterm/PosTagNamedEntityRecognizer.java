@@ -17,6 +17,7 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 
+//??
 public class PosTagNamedEntityRecognizer {
 
   private StanfordCoreNLP pipeline;
