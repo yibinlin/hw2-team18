@@ -24,6 +24,7 @@ public class SimpleBioSolrRetrievalStrategist extends SimpleSolrRetrievalStrateg
         System.out.println(doc.getFieldValue("id"));
       }
     } catch (Exception e) {
+      // Test Line
       System.err.println("Error retrieving documents from Solr: " + e);
     }
     return result;
