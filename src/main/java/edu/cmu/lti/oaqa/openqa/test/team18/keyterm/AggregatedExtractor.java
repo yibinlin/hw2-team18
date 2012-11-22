@@ -60,7 +60,7 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
         List<Keyterm> keyterms = ae.getKeyterms(strLine);
         for(Keyterm kt : keyterms)
         {
-          System.out.println(kt.getText());
+          System.out.println("keyterm: " + kt.getText());
         }
       }
     } catch (Exception e) {
