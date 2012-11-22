@@ -15,9 +15,9 @@ import edu.stanford.nlp.util.CoreMap;
 
 /**
  * get some candidates using Stanford Parser.
- *  
+ * 
  * @author Yibin Lin
- *
+ * 
  */
 public class SyntaxParsing {
   private StanfordCoreNLP pipeline;
@@ -33,6 +33,8 @@ public class SyntaxParsing {
 
   public List<String> getKeytermCandidates(String text) {
     this.clearCandidates();
+    text = text.replaceAll("[0-9]+\\|", "");
+    // System.out.println(text);
     Annotation document = new Annotation(text);
     pipeline.annotate(document);
     List<CoreMap> sentences = document.get(SentencesAnnotation.class);
@@ -47,32 +49,28 @@ public class SyntaxParsing {
   private synchronized void addCandidate(String phrase) {
     candidates.add(phrase);
   }
-  
-  private synchronized void clearCandidates()
-  {
+
+  private synchronized void clearCandidates() {
     candidates.clear();
   }
 
   /**
-   * go through the whole tree node by node, by using a 
-   * depth-first search-style approach. If a node is within
-   * our category, then we print all the words enclosed in 
-   * this consitituent.
+   * go through the whole tree node by node, by using a depth-first search-style approach. If a node
+   * is within our category, then we print all the words enclosed in this consitituent.
    * 
-   * @param node current node we are searching, used in the 
-   * recursive call.
+   * @param node
+   *          current node we are searching, used in the recursive call.
    */
   private void goThroughTree(Tree node) {
     if (node == null) {
       return;
     } else {
-      System.out.println(node.label().value());
+      //System.out.println(node.label().value());
       if (checkCategory(node.label().value())) {
         StringBuffer sb = new StringBuffer();
         this.updateCandidate(node, sb);
-        if(!this.filterCandidate(sb.toString()))
-        {
-          this.addCandidate(sb.toString());
+        if (!this.filterCandidate(sb.toString().trim(), node)) {
+          this.addCandidate(sb.toString().trim());
         }
       }
       Tree[] children = node.children();
@@ -83,14 +81,20 @@ public class SyntaxParsing {
   }
 
   /**
-   * filter candidate string, currently this method does nothing.. just return false, 
-   * and therefore has no effect to the system
+   * filter candidate string, currently this method does nothing.. just return false, and therefore
+   * has no effect to the system
    * 
    * @param string
    * @return true if the string is considered to be filtered.
    */
-  private boolean filterCandidate(String string) {
-    // TODO Auto-generated method stub
+  private boolean filterCandidate(String string, Tree node) {
+    if(string.matches("[0-9]+ .*"))
+    {
+      return true;
+    }else if(node.label().value().equalsIgnoreCase("VBP"))
+    {
+      //To be implemented
+    }
     return false;
   }
 
@@ -102,7 +106,7 @@ public class SyntaxParsing {
    * @return true if the category is what we wanted, false if no.
    */
   private boolean checkCategory(String label) {
-    if (label.equalsIgnoreCase("NP")) {
+    if (label.equalsIgnoreCase("NP") || label.equalsIgnoreCase("VBP")) {
       return true;
     }
     return false;
@@ -117,8 +121,10 @@ public class SyntaxParsing {
    */
   private void updateCandidate(Tree node, StringBuffer sb) {
     if (node.isLeaf()) {
-      sb.append(" ");
-      sb.append(node.label().value());
+      if (!(node.label().value().equals("-LRB-") || node.label().value().equals("-RRB-"))) {
+        sb.append(" ");
+        sb.append(node.label().value());
+      }
     } else {
       Tree[] children = node.children();
       for (Tree child : children) {
