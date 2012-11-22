@@ -1,7 +1,6 @@
 package edu.cmu.lti.oaqa.openqa.test.team18.keyterm;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,15 +8,13 @@ import java.util.List;
 import org.apache.uima.UimaContext;
 import org.apache.uima.resource.ResourceInitializationException;
 
-import com.aliasi.chunk.Chunker;
-import com.aliasi.util.AbstractExternalizable;
-
 import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
 public class AggregatedExtractor extends AbstractKeytermExtractor {
 
   SyntaxParsing sp;
+  LingPipeNER lpn;
   
   @Override
   /**
@@ -26,17 +23,54 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
   public void initialize(UimaContext aContext) throws ResourceInitializationException {
     //super.initialize(aContext);
     sp = new SyntaxParsing();
+    lpn = new LingPipeNER();
   }
   
   @Override
   protected List<Keyterm> getKeyterms(String question) {
     List<Keyterm> res = new LinkedList<Keyterm>();
-    List<String> candidates = sp.getKeytermCandidates(question);
-    for(String s : candidates)
+    List<String> synCandidates = sp.getKeytermCandidates(question);
+    //TBD
+    //this.log("Starting to get keyterms from StanfordCoreNLP...");
+    List<String> lingpipeCandidates = lpn.getKeytermCandidates(question); 
+    //this.log("Starting to get keyterms from Lingpipe...");
+    
+    //System.out.println(synCandidates);
+    //System.out.println(lingpipeCandidates);
+    
+    for(String s : synCandidates)
     {
       res.add(new Keyterm(s));
     }
+    for(String s : lingpipeCandidates)
+    {
+      if(!findKeyterm(res, s))
+      {
+        res.add(new Keyterm(s));
+      }
+    }
     return res;
+  }
+  
+  /**
+   * Find whether a string is already included in the keyterm list.
+   * 
+   * @param l keyterm list
+   * @param s a query string
+   * @return true if the string is already included, false otherwise.
+   */
+  private boolean findKeyterm(List<Keyterm> l, String s)
+  {
+    for(Keyterm k : l)
+    {
+      if(k.getText().equalsIgnoreCase(s))
+      {
+        //System.out.println(k.getText());
+        //System.out.println(s);
+        return true;
+      }
+    }
+    return false;
   }
 
   public static void main(String[] args) {
