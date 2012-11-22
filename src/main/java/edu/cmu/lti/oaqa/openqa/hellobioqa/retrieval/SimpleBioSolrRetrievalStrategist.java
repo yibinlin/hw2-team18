@@ -17,6 +17,8 @@ public class SimpleBioSolrRetrievalStrategist extends SimpleSolrRetrievalStrateg
       SolrDocumentList docs = wrapper.runQuery(query, hitListSize);
 
       for (SolrDocument doc : docs) {
+    	
+    	System.out.println((String) doc.getFieldValue("termVectors"));
 
         RetrievalResult r = new RetrievalResult((String) doc.getFieldValue("id"),
                 (Float) doc.getFieldValue("score"), query);
