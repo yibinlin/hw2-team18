@@ -12,11 +12,13 @@ import com.google.common.collect.Lists;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.PassageCandidate;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
+import edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorerProduct;
 import edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorerSum;
-import edu.cmu.lti.oaqa.openqa.hello.passage.PassageCandidateFinder;
 import edu.cmu.lti.oaqa.openqa.hello.passage.SimplePassageExtractor;
 
-public class IBMretrieval extends SimplePassageExtractor{
+public class PassageRetrieval extends SimplePassageExtractor {
+
+  @Override
   protected List<PassageCandidate> extractPassages(String question, List<Keyterm> keyterms,
           List<RetrievalResult> documents) {
     List<PassageCandidate> result = new ArrayList<PassageCandidate>();
@@ -30,10 +32,10 @@ public class IBMretrieval extends SimplePassageExtractor{
         String text = Jsoup.parse(htmlText).text().replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
         // for now, making sure the text isn't too long
         text = text.substring(0, Math.min(5000, text.length()));
-        System.out.println("clean text:"+text);
+        System.out.println(text);
 
-        PassageCandidateFinder finder = new PassageCandidateFinder(id, text,
-                new KeytermWindowScorerSum());
+        IBMstrategy finder = new IBMstrategy(id, text,
+                new KeytermWindowScorerProduct());
         List<String> keytermStrings = Lists.transform(keyterms, new Function<Keyterm, String>() {
           public String apply(Keyterm keyterm) {
             return keyterm.getText();
@@ -47,6 +49,8 @@ public class IBMretrieval extends SimplePassageExtractor{
         e.printStackTrace();
       }
     }
+    //System.out.println(result);
     return result;
   }
+
 }

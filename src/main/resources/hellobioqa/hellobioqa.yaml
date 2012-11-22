@@ -29,7 +29,7 @@ pipeline:
     name: passage-extractor
     options: |
       #- inherit: hellobioqa.passage.simple
-      - inherit: hellobioqa.team18.passage.IBMretrieval
+      - inherit: hellobioqa.team18.passage.PassageRetrieval
       
   - inherit: helloqa.eval.keyterm-aggregator-consumer
 
