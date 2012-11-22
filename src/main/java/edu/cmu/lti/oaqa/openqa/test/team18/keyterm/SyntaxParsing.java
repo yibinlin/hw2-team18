@@ -63,7 +63,7 @@ public class SyntaxParsing extends KeytermCandidateFinder{
         StringBuffer sb = new StringBuffer();
         boolean updateSuccess = this.updateCandidate(node, sb);
         if (updateSuccess && !this.filterCandidate(sb.toString().trim(), node)) {
-          this.addCandidate(sb.toString().trim());
+          this.addCandidate(postprocessing(sb.toString().trim()));
         }
       }
       Tree[] children = node.children();
@@ -74,17 +74,28 @@ public class SyntaxParsing extends KeytermCandidateFinder{
   }
 
   /**
+   * 
+   * @param s
+   * @return
+   */
+  private String postprocessing(String s) {
+    s = s.replaceAll(" 's", "'s");
+    return s;
+  }
+
+  /**
    * filter candidate string, currently this method does nothing.. just return false, and therefore
    * has no effect to the system
    * 
    * @param string
-   * @return true if the string is considered to be filtered.
+   * @return true if the string is considered (better) to be filtered.
    */
   private boolean filterCandidate(String string, Tree node) {
     if(string.matches("[0-9]+ .*"))
     {
       return true;
-    }else if(node.label().value().equalsIgnoreCase("VBP"))
+    }
+    else if(node.label().value().equalsIgnoreCase("VBP"))
     {
       //System.out.println(String.format("string: %s, label: %s", string, node.label().value()));
       String l = this.morph.lemma(string, node.label().value());
@@ -93,7 +104,21 @@ public class SyntaxParsing extends KeytermCandidateFinder{
         return true;
       }
     }
+    else if(string.contains("(") || string.contains(")")) //filter left/right parenthesis..
+    {
+      return true;
+    }
+    else if(!string.matches(".*[a-zA-Z0-9]")) //if ends with a special character, we filter it..
+    {
+      return true;
+    }
+    else if(!string.matches("[a-zA-Z0-9].*")) //if starts with a special character, we filter it..
+    {
+      return true;
+    }
+    
     return false;
+      
   }
 
   /**
@@ -124,7 +149,7 @@ public class SyntaxParsing extends KeytermCandidateFinder{
       if ((node.label().value().equals("-LRB-") || node.label().value().equals("-RRB-")))
       //ignore the parenthesis..
       {
-        return result;
+        return false;
       }
       else
       {

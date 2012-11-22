@@ -32,7 +32,7 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
     List<String> synCandidates = sp.getKeytermCandidates(question);
     //TBD
     //this.log("Starting to get keyterms from StanfordCoreNLP...");
-    List<String> lingpipeCandidates = lpn.getKeytermCandidates(question); 
+    //List<String> lingpipeCandidates = lpn.getKeytermCandidates(question); 
     //this.log("Starting to get keyterms from Lingpipe...");
     
     //System.out.println(synCandidates);
@@ -42,13 +42,14 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
     {
       res.add(new Keyterm(s));
     }
+    /*
     for(String s : lingpipeCandidates)
     {
       if(!findKeyterm(res, s))
       {
         res.add(new Keyterm(s));
       }
-    }
+    }*/
     return res;
   }
   
