@@ -42,7 +42,6 @@ public class LingPipeNER extends KeytermCandidateFinder{
     text = text.replaceAll("[0-9]+\\|", "");
     double confidence = 0; // confidence for whether a word/phrase is the target
     char[] cha;
-    StringBuffer sb = new StringBuffer();
     
     int startoffset;
     int endoffset;
@@ -50,6 +49,7 @@ public class LingPipeNER extends KeytermCandidateFinder{
     
     Iterator<Chunk> it = (Iterator) chunker.nBestChunks(cha, 0, cha.length, MAX_N_BEST_CHUNKS);
     while (it.hasNext()) {
+      StringBuffer sb = new StringBuffer();
       Chunk c = it.next();
       // organize the confidence for the words
       confidence = Math.pow(2.0, c.score());
@@ -60,9 +60,31 @@ public class LingPipeNER extends KeytermCandidateFinder{
         for (int i = startoffset; i <= endoffset; i++) {
           sb.append(cha[i]);
         }
-        this.addCandidate(sb.toString().trim());
+        String cnddt = sb.toString().trim();
+        if(!filterCandidate(cnddt))
+        {
+          this.addCandidate(cnddt);
+        }
       }
     }
     return candidates;
+  }
+  
+  private boolean filterCandidate(String string) {
+    if(string.contains("(") || string.contains(")")) //filter left/right parenthesis..
+    {
+      return true;
+    }
+    else if(!string.matches(".*[a-zA-Z0-9]")) //if ends with a special character, we filter it..
+    {
+      return true;
+    }
+    else if(!string.matches("[a-zA-Z0-9].*")) //if starts with a special character, we filter it..
+    {
+      return true;
+    }
+    
+    return false;
+      
   }
 }

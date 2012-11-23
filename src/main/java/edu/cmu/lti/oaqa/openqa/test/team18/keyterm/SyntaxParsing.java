@@ -116,6 +116,10 @@ public class SyntaxParsing extends KeytermCandidateFinder{
     {
       return true;
     }
+    else if(string.matches(".*'s"))
+    {
+      return true;
+    }
     
     return false;
       
