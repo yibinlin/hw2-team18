@@ -84,6 +84,7 @@ public class GoParser {
 	
 	}
 	
+	
 	public List<String> findExactSynonyms(String gene){
 		
 		return findSynonyms(gene, "exact");
@@ -117,6 +118,15 @@ public class GoParser {
 			}
 		}
 		return synonyms;
+	}
+	
+	public List<String> exhaustedSearchSynonyms(String gene){
+		for(String term:this.termSet){
+			if (term.contains(gene)){
+				return findAllSynonyms(term);
+			}
+		}
+		return new ArrayList<String> ();
 	}
 	
 	public Map<String,Map<String,List<String>>> getDictionary(){
