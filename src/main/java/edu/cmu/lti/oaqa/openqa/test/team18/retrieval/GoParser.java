@@ -20,20 +20,21 @@ public class GoParser {
 	
 
 	private Map<String,Map<String,List<String>>> synonymDictionary;
+	private Set<String> termSet;
 	
 	private Map<String,Map<String,List<String>>> buildDictionary(Document doc){
 		
 		Element root = doc.getDocumentElement();
 		
 		Map<String,Map<String,List<String>>> dictionary = new HashMap<String,Map<String,List<String>>>();
-		
+		this.termSet = new TreeSet<String>();
 		
 		NodeList termList = doc.getElementsByTagName("term");
 		for(int i = 0; i < termList.getLength(); i++){
 			Element termElement = (Element) termList.item(i);
 			Element nameElement = (Element) termElement.getElementsByTagName("name").item(0);
 			String name = nameElement.getTextContent();
-			//System.out.println(name);
+			this.termSet.add(name);
 
 			Map<String,List<String>> synonymGroup = new HashMap<String,List<String>>();
 			synonymGroup.put("exact", new ArrayList<String>());
@@ -71,8 +72,15 @@ public class GoParser {
 	
 	private List<String> findSynonyms(String gene,String scope){
 		
-		return this.synonymDictionary.get(gene).get(scope);
+		List<String> li = new ArrayList<String> ();
 		
+		if (this.termSet.contains(gene)){
+			for (String str:this.synonymDictionary.get(gene).get(scope)){
+				li.add(str);
+			};
+		}
+		return li;
+	
 	}
 	
 	public List<String> findExactSynonyms(String gene){
@@ -97,12 +105,14 @@ public class GoParser {
 	
 	public List<String> findAllSynonyms(String gene){
 		List<String> synonyms = new ArrayList<String> ();
-		Map<String,List<String>> geneSynonyms = this.synonymDictionary.get(gene);
-		Set<String> keys = geneSynonyms.keySet();
-		for(String k:keys){
-			List<String> subList = geneSynonyms.get(k);
-			for(String s:subList){
-				synonyms.add(s);
+		if (this.termSet.contains(gene)){
+			Map<String,List<String>> geneSynonyms = this.synonymDictionary.get(gene);
+			Set<String> keys = geneSynonyms.keySet();
+			for(String k:keys){
+				List<String> subList = geneSynonyms.get(k);
+				for(String s:subList){
+					synonyms.add(s);
+				}
 			}
 		}
 		return synonyms;

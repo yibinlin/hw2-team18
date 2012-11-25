@@ -29,6 +29,13 @@ import edu.cmu.lti.oaqa.cse.basephase.retrieval.AbstractRetrievalStrategist;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
 
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.index.Term;
+
 /**
  * 
  * @author Zi Yang <ziy@cs.cmu.edu>
@@ -77,10 +84,18 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
 
   protected String formulateQuery(List<Keyterm> keyterms) {
     StringBuffer result = new StringBuffer();
-    for (Keyterm keyterm : keyterms) {
-      result.append(keyterm.getText() + " ");
+    
+    
+    result.append("+(");
+    for(int i=0; i < keyterms.size() - 1; i++){
+    	result.append(keyterms.get(i).getText() + " AND ");
     }
+    
+    result.append(keyterms.get(keyterms.size()-1).getText() + ") ");
+
+    result.append(keyterms.get(keyterms.size()-1).getText()+"^100");
     String query = result.toString();
+    System.out.println("Lucene Query:" + query);
     return query;
   }
 
