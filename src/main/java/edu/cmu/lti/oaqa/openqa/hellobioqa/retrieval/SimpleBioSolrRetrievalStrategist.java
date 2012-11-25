@@ -23,7 +23,7 @@ public class SimpleBioSolrRetrievalStrategist extends SimpleSolrRetrievalStrateg
         RetrievalResult r = new RetrievalResult((String) doc.getFieldValue("id"),
                 (Float) doc.getFieldValue("score"), query);
         result.add(r);
-        System.out.println(doc.getFieldValue("id"));
+        //System.out.println(doc.getFieldValue("id"));
       }
     } catch (Exception e) {
       // Test Line
