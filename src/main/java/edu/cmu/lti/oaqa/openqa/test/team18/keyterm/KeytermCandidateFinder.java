@@ -18,6 +18,10 @@ public abstract class KeytermCandidateFinder {
   public KeytermCandidateFinder() {
     candidates = new LinkedList<String>();
   }
+  
+  synchronized void addCandidateToHead(String phrase) {
+    ((LinkedList)candidates).addFirst(phrase);
+  }
 
   synchronized void addCandidate(String phrase) {
     candidates.add(phrase);

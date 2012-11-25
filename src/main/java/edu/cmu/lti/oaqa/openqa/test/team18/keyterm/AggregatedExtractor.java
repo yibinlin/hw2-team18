@@ -22,14 +22,14 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
    * TBD: Need to uncomment the code: super.initialize....
    */
   public void initialize(UimaContext aContext) throws ResourceInitializationException {
-     super.initialize(aContext);
+    super.initialize(aContext);
     sp = new SyntaxParsing();
     lpn = new LingPipeNER();
   }
 
   @Override
   protected List<Keyterm> getKeyterms(String question) {
-    List<Keyterm> res = new LinkedList<Keyterm>();
+    LinkedList<Keyterm> res = new LinkedList<Keyterm>();
     List<String> synCandidates = sp.getKeytermCandidates(question);
     // TBD
     this.log("Starting to get keyterms from StanfordCoreNLP...");
@@ -48,7 +48,7 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
     for (String s : lingpipeCandidates) {
       if (question.contains(s)) {
         if (!findKeyterm(res, s)) {
-          res.add(new Keyterm(s));
+          res.addFirst(new Keyterm(s));
         }
       }
     }

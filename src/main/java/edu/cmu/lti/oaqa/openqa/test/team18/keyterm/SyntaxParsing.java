@@ -22,7 +22,7 @@ import edu.stanford.nlp.util.CoreMap;
  */
 public class SyntaxParsing extends KeytermCandidateFinder{
   private StanfordCoreNLP pipeline;
-  Morphology morph;
+  private Morphology morph;
 
   public SyntaxParsing() throws ResourceInitializationException {
     super();
