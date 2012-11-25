@@ -16,7 +16,10 @@
 
 package edu.cmu.lti.oaqa.openqa.test.team18.retrieval;
 
+import java.io.IOException;
 import java.util.*;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -35,6 +38,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.index.Term;
+import org.xml.sax.SAXException;
 
 /**
  * 
@@ -46,6 +50,9 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
   protected Integer hitListSize;
 
   protected SolrWrapperExtend wrapper;
+  
+  protected GoParser goParser;
+  protected NihParser nihParser;
 
   @Override
   public void initialize(UimaContext aContext) throws ResourceInitializationException {
@@ -56,6 +63,26 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
       this.hitListSize = Integer.parseInt((String) aContext
               .getConfigParameterValue("hit-list-size"));
     }
+    try {
+		this.goParser = new GoParser("src/main/resources/dict/synonym.xml");
+		System.out.println("Go Parser loaded~");
+	} catch (ParserConfigurationException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	} catch (SAXException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	} catch (IOException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+    try {
+		this.nihParser = new NihParser("src/main/resources/dict/nih.txt");
+		System.out.println("Nih Parser loaded~");
+	} catch (IOException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
     String serverUrl = (String) aContext.getConfigParameterValue("server");
     Integer serverPort = (Integer) aContext.getConfigParameterValue("port");
     Boolean embedded = (Boolean) aContext.getConfigParameterValue("embedded");
@@ -82,19 +109,42 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
   
  
   
+  protected List<String> expandQuery(List<Keyterm> keyterms){
+	  List<String> relatedWords = new ArrayList<String> ();
+	  for(Keyterm key:keyterms){
+		  String word = key.getText();
+		  List<String> goList = this.goParser.findAllSynonyms(word);
+		  for(String rw:goList){
+			  relatedWords.add(rw);
+		  }
+		  List<String> nihList = this.nihParser.findSynonyms(word);
+		  for(String rw:nihList){
+			  relatedWords.add(rw);
+		  }
+	  }
+	  return relatedWords;
+  }
+  
 
   protected String formulateQuery(List<Keyterm> keyterms) {
     StringBuffer result = new StringBuffer();
     
+    List<String> relatedWords = expandQuery(keyterms);
     
     result.append("+(");
-    for(int i=0; i < keyterms.size() - 1; i++){
+    for(int i=0; i < keyterms.size()-1; i++){
     	result.append(keyterms.get(i).getText() + " OR ");
+    }
+    
+    for(int i=0; i< relatedWords.size(); i++){
+    	result.append(relatedWords.get(i) + " OR ");
     }
     
     result.append(keyterms.get(keyterms.size()-1).getText() + ") ");
 
-    result.append(keyterms.get(keyterms.size()-1).getText()+"^100");
+    for(int i=0; i < keyterms.size(); i++){
+    	result.append(keyterms.get(i).getText()+"^10 ");
+    }
     String query = result.toString();
     System.out.println("Lucene Query:" + query);
     return query;
