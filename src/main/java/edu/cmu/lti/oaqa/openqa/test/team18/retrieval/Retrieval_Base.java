@@ -80,6 +80,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
 	  return new ArrayList<String>();
   }
   
+ 
   
 
   protected String formulateQuery(List<Keyterm> keyterms) {
@@ -88,7 +89,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
     
     result.append("+(");
     for(int i=0; i < keyterms.size() - 1; i++){
-    	result.append(keyterms.get(i).getText() + " AND ");
+    	result.append(keyterms.get(i).getText() + " OR ");
     }
     
     result.append(keyterms.get(keyterms.size()-1).getText() + ") ");
