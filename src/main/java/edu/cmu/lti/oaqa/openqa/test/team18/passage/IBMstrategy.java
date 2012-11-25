@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 
+import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.PassageCandidate;
 import edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorer;
 import edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorerProduct;
@@ -42,6 +43,8 @@ public class IBMstrategy {
   public List<PassageCandidate> extractPassages(String[] keyterms) {
     List<List<PassageSpan>> matchingSpans = new ArrayList<List<PassageSpan>>();
     List<PassageSpan> matchedSpans = new ArrayList<PassageSpan>();
+    List<PassageSpan> pivots = new ArrayList<PassageSpan>();
+    // List<Integer> weightP = new ArrayList<Integer>();
 
     // Find all keyterm matches.
     for (String keyterm : keyterms) {
@@ -62,12 +65,12 @@ public class IBMstrategy {
     List<Integer> leftEdges = new ArrayList<Integer>();
     List<Integer> rightEdges = new ArrayList<Integer>();
     List<PassageSpan> pspan = getPassageSentences();
-//    Iterator<PassageSpan> it = pspan.iterator();
-//    while (it.hasNext()){
-//      PassageSpan a = it.next();
-//      System.out.println("wo shi span de jieguo:"+a.getBegin()+" "+a.getEnd());
-//    }
-//    
+    // Iterator<PassageSpan> it = pspan.iterator();
+    // while (it.hasNext()){
+    // PassageSpan a = it.next();
+    // System.out.println("wo shi span de jieguo:"+a.getBegin()+" "+a.getEnd());
+    // }
+    //
     for (PassageSpan ps : pspan) {
       Integer leftEdge = ps.begin;
       Integer rightEdge = ps.end;
@@ -84,7 +87,10 @@ public class IBMstrategy {
       for (Integer end : rightEdges) {
         if (end <= begin)
           continue;
+        if (end-begin>500)
+          continue;
         // This code runs for each window.
+        pivots.clear();
         int keytermsFound = 0;
         int matchesFound = 0;
         for (List<PassageSpan> keytermMatches : matchingSpans) {
@@ -93,6 +99,17 @@ public class IBMstrategy {
             if (keytermMatch.containedIn(begin, end)) {
               matchesFound++;
               thisKeytermFound = true;
+              boolean find=false;
+              for (PassageSpan ps1 : pivots) {
+                if (ps1.getBegin() == keytermMatch.getBegin() && ps1.getEnd() == keytermMatch
+                        .getEnd()) {
+                  find=true;
+                }
+              }
+              if (!find){
+                pivots.add(keytermMatch);
+              }
+
             }
           }
           if (thisKeytermFound)
@@ -100,8 +117,80 @@ public class IBMstrategy {
         }
         double score = scorer.scoreWindow(begin, end, matchesFound, totalMatches, keytermsFound,
                 totalKeyterms, textSize);
+
+        // pivot score
+        double avgP = 0, avgA = 0;
+        double maxP = 0, maxA = 0;
+        double totalP = 0, totalA = 0;
+        double rP = (double)pivots.size() / (double)matchingSpans.size();
+        double dist = 0;
+        // if (pivots.size()>100){
+        // System.out.println(pivots.size());
+        // }
+        for (PassageSpan ps1 : pivots) {
+          for (PassageSpan ps2 : pivots) {
+            if (ps1 != ps2) {
+              totalP += Math.abs(ps2.getBegin() - ps1.getBegin());
+              if (maxP < Math.abs(ps2.getBegin() - ps1.getBegin())) {
+                maxP = Math.abs(ps2.getBegin() - ps1.getBegin());
+              }
+              // System.out.println("I am running");
+            }
+          }
+          totalA += Math.abs(ps1.getBegin() - begin);
+          if (maxA < Math.abs(ps1.getBegin() - begin)) {
+            maxA = Math.abs(ps1.getBegin() - begin);
+          }
+        }
+        avgP = totalP / pivots.size();
+        avgA = totalA / pivots.size();
+        String k = null;
+        int w = 0;
+//        for (PassageSpan ps1 : pivots) {
+//          System.out.println("what!"+ps1.getBegin() + " " + ps1.getEnd());
+//        }
+        for (PassageSpan ps1 : pivots) {
+          k = text.substring(ps1.getBegin(), ps1.getEnd());
+//          System.out.println(k);
+//          for (String a : keyterms) {
+//            System.out.print(a + " ");
+//          }
+
+          // Keyterm nk = new Keyterm(k);
+          for (int i = 0; i <= keyterms.length; i++) {
+            if (keyterms[i].equals(k)) {
+              w = i+1;
+              break;
+            }
+          }
+          dist += (250 / w) * (1 - (ps1.getBegin() - begin) / maxA);
+        }
+       // System.out.println("dist"+dist);
+        double scorePivot = 0;
+        double pSize = pivots.size();
+//        System.out.println(avgP);
+//        System.out.println(totalP);
+//        System.out.println(rP);
+//        System.out.println(pSize);
+//        System.out.println("--------------");
+        scorePivot = rP * (avgP / totalP) * (1 / pSize) * dist;
+        //System.out.println("scorePivot"+scorePivot);
+        // end of pivot score
+
         PassageCandidate window = null;
-        if (score >= 0.5) {
+        if (dist!=0.0){
+          score=score*(scorePivot+1000);
+        }
+        else{
+          score=0;
+        }
+//        if (scorePivot <1) {
+//          score = 0;
+//        }
+        
+        //System.out.println(score);
+        if (score >= 0) {
+          // score=0;
           try {
             window = new PassageCandidate(docId, begin, end, (float) score, null);
 
@@ -183,35 +272,29 @@ public class IBMstrategy {
     List<PassageSpan> span = new ArrayList<PassageSpan>();
     int i = 0, j = 1;
     // int s=0, e=0;
-   // int spanNumber = 0;
-    while (j < textSize-2) {
-      if (text.charAt(j) == '.' && text.charAt(j+2) >= 'A' && text.charAt(j+2) <= 'Z') {
+    // int spanNumber = 0;
+    char[] punc = { '.', '?', '!' };
+    while (j < textSize - 2) {
+      if (text.charAt(j) == '.' && text.charAt(j + 2) >= 'A' && text.charAt(j + 2) <= 'Z') {
         PassageSpan a = new PassageSpan(i, j);
         span.add(a);
-        i = j;
-        //spanNumber++;
+        i = j + 2;
+        // spanNumber++;
       }
       j++;
     }
-    PassageSpan a = new PassageSpan(i, textSize-1);
+    PassageSpan a = new PassageSpan(i, textSize - 1);
     span.add(a);
-    // i = 0;
-    // j = 1;
-    // while (j < spanNumber) {
-    // PassageSpan a = new PassageSpan(span.get(i).begin, span.get(j).end);
-    // span.add(a);
-    // i++;
-    // j++;
+    // Iterator <PassageSpan> it = span.iterator();
+    // while (it.hasNext()){
+    // PassageSpan a1=it.next();
+    // System.out.print("Punctuation of Passage"+a1.getBegin()+" "+a1.getEnd()+"\t");
+    // int ii=0;
+    // for (ii=a1.getBegin();ii<=a1.getEnd();ii++){
+    // System.out.print(text.charAt(ii));
     // }
-    // i = 0;
-    // j = 2;
-    // while (j < spanNumber) {
-    // PassageSpan a = new PassageSpan(span.get(i).begin, span.get(j).end);
-    // span.add(a);
-    // i++;
-    // j++;
+    // System.out.println();
     // }
-
     return span;
   }
 }
