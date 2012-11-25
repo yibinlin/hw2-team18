@@ -37,13 +37,10 @@ public class PassageRetrieval extends SimplePassageExtractor {
         GoParser gp = new GoParser("./src/main/resources/synonym.xml");
         lg = gp.findAllSynonyms(kt.toString());
       } catch (ParserConfigurationException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } catch (SAXException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } catch (IOException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       for (String s : lg) {
@@ -92,8 +89,7 @@ public class PassageRetrieval extends SimplePassageExtractor {
         String text = Jsoup.parse(htmlText).text().replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
         // for now, making sure the text isn't too long
         text = text.substring(0, Math.min(50000, text.length()));
-        // System.out.println(text);
-
+        
         IBMstrategy finder = new IBMstrategy(id, text, new KeytermWindowScorerSum());
         List<String> keytermStrings = Lists.transform(keyterms, new Function<Keyterm, String>() {
           public String apply(Keyterm keyterm) {
