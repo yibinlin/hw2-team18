@@ -11,6 +11,17 @@ import org.apache.uima.resource.ResourceInitializationException;
 import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
+/**
+ * The Aggregated Extractor uses both Stanford CoreNLP and 
+ * LingPipe Gene Tagger. It also places the output of LingPipe Gene 
+ * Tagger at the beginning of the result list.
+ * 
+ * It has a main method for testing, the main method is not the entry point
+ * of the project.
+ * 
+ * @author Yibin Lin
+ *
+ */
 public class AggregatedExtractor extends AbstractKeytermExtractor {
 
   SyntaxParsing sp;
@@ -19,7 +30,11 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
 
   @Override
   /**
-   * TBD: Need to uncomment the code: super.initialize....
+   * initialize StanfordCoreNLP and Lingpipe by initializing the 
+   * constructors of SyntaxParsing and LingPipeNER object.
+   * 
+   * Every time we are testing, we need to comment out the line
+   * "super.initialize(...)" 
    */
   public void initialize(UimaContext aContext) throws ResourceInitializationException {
     super.initialize(aContext);
@@ -28,6 +43,14 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
   }
 
   @Override
+  /**
+   * Get Keyterms using both Stanford CoreNLP Syntax Parser and 
+   * LingPipe package. 
+   * 
+   * Every time we are testing, we need to comment out 
+   * "this.log(...)" lines because it is related to context.
+   * @return a list of extracted keyterms.
+   */
   protected List<Keyterm> getKeyterms(String question) {
     LinkedList<Keyterm> res = new LinkedList<Keyterm>();
     List<String> synCandidates = sp.getKeytermCandidates(question);
@@ -75,6 +98,10 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
     return false;
   }
 
+  /**
+   * Only for internal testing purposes. It is not in the pipeline. 
+   * @param args
+   */
   public static void main(String[] args) {
     AggregatedExtractor ae = new AggregatedExtractor();
     try {
@@ -99,7 +126,6 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
         }
       }
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 

@@ -17,6 +17,14 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 
+/**
+ * This class finds keyterm candidates using LingPipe HMM
+ * Gene tagger. It means that it only finds gene mentions. 
+ * It doesn't find other nouns or verbs or adjectives.
+ * 
+ * @author Yibin Lin
+ *
+ */
 public class LingPipeNER extends KeytermCandidateFinder{
 
   int MAX_N_BEST_CHUNKS = 10;
@@ -37,6 +45,12 @@ public class LingPipeNER extends KeytermCandidateFinder{
     }
   }
 
+  /**
+   * @override
+   * It uses HMM Chunker of the LingPipe to get gene mentions.
+   * With confidence > 0.6, we think that it is a gene mention.
+   * 
+   */
   public List<String> getKeytermCandidates(String text) {
     this.clearCandidates();
     text = text.replaceAll("[0-9]+\\|", "");
@@ -70,6 +84,15 @@ public class LingPipeNER extends KeytermCandidateFinder{
     return candidates;
   }
   
+  /**
+   * filter candidate string, it will return true if and only if:
+   * 1. The string contains any parenthesis
+   * 2. The string starts with a special character.
+   * 3. The string ends with a special character. 
+   * 
+   * @param string the string candidate
+   * @return true if the string is better considered to be filtered.
+   */
   private boolean filterCandidate(String string) {
     if(string.contains("(") || string.contains(")")) //filter left/right parenthesis..
     {

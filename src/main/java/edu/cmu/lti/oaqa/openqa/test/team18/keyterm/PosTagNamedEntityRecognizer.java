@@ -17,7 +17,12 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 
-//??
+/**
+ * 
+ * @deprecated no longer used in our CSE pipeline.
+ * @author Yuchen Tian
+ *
+ */
 public class PosTagNamedEntityRecognizer {
 
   private StanfordCoreNLP pipeline;
