@@ -17,6 +17,8 @@ public class SimpleBioSolrRetrievalStrategist extends SimpleSolrRetrievalStrateg
       SolrDocumentList docs = wrapper.runQuery(query, hitListSize);
 
       for (SolrDocument doc : docs) {
+    	
+    	System.out.println("TermVectors:"+(String) doc.getFieldValue("termVectors"));
 
         RetrievalResult r = new RetrievalResult((String) doc.getFieldValue("id"),
                 (Float) doc.getFieldValue("score"), query);
@@ -24,6 +26,7 @@ public class SimpleBioSolrRetrievalStrategist extends SimpleSolrRetrievalStrateg
         //System.out.println(doc.getFieldValue("id"));
       }
     } catch (Exception e) {
+      // Test Line
       System.err.println("Error retrieving documents from Solr: " + e);
     }
     return result;

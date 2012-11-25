@@ -14,14 +14,12 @@ pipeline:
   - inherit: jdbc.sqlite.cse.phase  
     name: keyterm-extractor
     options: |
-      #- inherit: hellobioqa.team18.keyterm.aggregated-extractor
-      - inherit: hellobioqa.team18.keyterm.goldenstandard
-
+      - inherit: hellobioqa.team18.keyterm.aggregated-extractor
 
   - inherit: jdbc.sqlite.cse.phase 
     name: retrieval-strategist
     options: |
-      - inherit: hellobioqa.retrieval.simple-solr-strategist
+      - inherit: hellobioqa.team18.retrieval.retrieval-base
           
   - inherit: jdbc.sqlite.cse.phase  
     name: passage-extractor
