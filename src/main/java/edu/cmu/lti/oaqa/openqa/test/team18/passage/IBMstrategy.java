@@ -187,24 +187,24 @@ public class IBMstrategy {
         double scorePivot = 0;
         // pSize is the number of all the matched keyterms for this sentence
         double pSize = pivots.size();
-//        if (pSize>1){
-//          System.out.println("rp"+rP);
-//          System.out.println("avgP"+avgP);
-//          System.out.println("totalP"+totalP);
-//          System.out.println("maxP"+maxP);
-//          System.out.println("dist"+dist);
-//          System.out.println("pSize"+pSize);
-//          System.out.println("length"+(end-begin));
-//        }
+        if (pSize>1){
+          System.out.println("rp"+rP);
+          System.out.println("avgP"+avgP);
+          System.out.println("totalP"+totalP);
+          System.out.println("maxP"+maxP);
+          System.out.println("dist"+dist);
+          System.out.println("pSize"+pSize);
+          System.out.println("length"+(end-begin));
+        }
         // calculate scorePivot
         scorePivot = rP * (avgP / maxP) * (1 / pSize) * dist;
         PassageCandidate window = null;
         // if scorePivot is meaningful, calculate a new score
         // otherwise, set the score to 0
-//        if (pSize>1){
-//          System.out.println("scorePivot:"+scorePivot);
-//          System.out.println("score:"+score);
-//        }
+        if (pSize>1){
+          System.out.println("scorePivot:"+scorePivot);
+          System.out.println("score:"+score);
+        }
         if (dist != 0.0) {
           score = score * (scorePivot + 1);
         } else {
