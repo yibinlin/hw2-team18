@@ -26,6 +26,7 @@ public class GoParser {
 		
 		Element root = doc.getDocumentElement();
 		
+		
 		Map<String,Map<String,List<String>>> dictionary = new HashMap<String,Map<String,List<String>>>();
 		this.termSet = new TreeSet<String>();
 		
