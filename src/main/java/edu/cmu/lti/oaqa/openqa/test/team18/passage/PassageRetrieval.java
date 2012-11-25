@@ -26,12 +26,11 @@ public class PassageRetrieval extends SimplePassageExtractor {
   @Override
   protected List<PassageCandidate> extractPassages(String question, List<Keyterm> keyterms,
           List<RetrievalResult> documents) {
-    // System.out.print("question?"+question);
     List<PassageCandidate> result = new ArrayList<PassageCandidate>();
     List<Keyterm> newK = new ArrayList<Keyterm>();
+    //Search for synonyms of gene of Keyterms
+    //find all sysnonyms and add to a list newK
     for (Keyterm kt : keyterms) {
-      // System.out.println(kt.getText());
-
       List<String> lg = new ArrayList<String>();
       try {
         GoParser gp = new GoParser("./src/main/resources/synonym.xml");
@@ -45,18 +44,23 @@ public class PassageRetrieval extends SimplePassageExtractor {
       }
       for (String s : lg) {
         Keyterm newk = new Keyterm(s);
-        // System.out.println(newk);
         newK.add(newk);
       }
     }
+    //search for synonyms of verbs of Keyterms
+    //Add all synonyms into list newK
     for (Keyterm kt : keyterms) {
       List<String> ls = WordNetImpl.searchForSynonyms(kt.toString());
       for (String s : ls) {
         Keyterm newk = new Keyterm(s);
-        // System.out.println(newk);
         newK.add(newk);
       }
     }
+//    for (Keyterm kt: keyterms){
+//      System.out.println(kt);
+//    }
+    //add the Keyterms in newK to list Keyterm
+    //before add, search Keyterms to make sure all the keyterms in list Keyeterms are unique. 
     boolean exist = false;
     for (Keyterm kt : newK) {
       exist = false;
@@ -69,44 +73,36 @@ public class PassageRetrieval extends SimplePassageExtractor {
           break;
         }
       }
-      // if (kt.toString()=="be"){
-      // exist=true;
-      // }
       if (!exist) {
         keyterms.add(kt);
       }
     }
-//    for (Keyterm s : keyterms){
-//      System.out.println(s);
-//    }
+    //get the document and start to retrieve passage
+    //main strategy of retrieval is from class IBMstategy
     for (RetrievalResult document : documents) {
-      // System.out.println("RetrievalResult: " + document.toString());
       String id = document.getDocID();
       try {
         String htmlText = wrapper.getDocText(id);
-
-        // cleaning HTML text
+        //clean htmeText
         String text = Jsoup.parse(htmlText).text().replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
-        // for now, making sure the text isn't too long
         text = text.substring(0, Math.min(50000, text.length()));
-        
+        //create new finder and get the result
         IBMstrategy finder = new IBMstrategy(id, text, new KeytermWindowScorerSum());
         List<String> keytermStrings = Lists.transform(keyterms, new Function<Keyterm, String>() {
           public String apply(Keyterm keyterm) {
             return keyterm.getText();
           }
         });
+        //get the result of lists and return
         List<PassageCandidate> passageSpans = finder.extractPassages(keytermStrings
                 .toArray(new String[0]));
         for (PassageCandidate passageSpan : passageSpans) {
-          // System.out.println(passageSpan.getDocID()+" "+passageSpan.getStart()+" "+passageSpan.getEnd());
           result.add(passageSpan);
         }
       } catch (SolrServerException e) {
         e.printStackTrace();
       }
     }
-    // System.out.println(result);
     return result;
   }
 
