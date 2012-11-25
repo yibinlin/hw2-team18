@@ -13,8 +13,12 @@ import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
 
-
-
+/**
+ * 
+ * @deprecated No longer used in the CSE pipeline.
+ * @author Yuchen Tian
+ *
+ */
 public class CoreNLPExtractor extends AbstractKeytermExtractor{
 
 	@Override

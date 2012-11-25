@@ -15,7 +15,7 @@ import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
- * get some candidates using Stanford Parser.
+ * get some keyterm candidates using Stanford Syntax Parser.
  * 
  * @author Yibin Lin
  * 
@@ -24,6 +24,11 @@ public class SyntaxParsing extends KeytermCandidateFinder{
   private StanfordCoreNLP pipeline;
   private Morphology morph;
 
+  /**
+   * Constructor, initialize StanfordCoreNLP and Morphology.
+   * 
+   * @throws ResourceInitializationException
+   */
   public SyntaxParsing() throws ResourceInitializationException {
     super();
     Properties props = new Properties();
@@ -32,6 +37,16 @@ public class SyntaxParsing extends KeytermCandidateFinder{
     morph = new Morphology();
   }
 
+  /**
+   * @override
+   * 
+   * Get the keyterm candidate by using StanfordCoreNLP parser. The algorithm is roughly as follows:
+   * 1. Print the leaves of every node that is marked NP.
+   * 2. Print the leaves of every node that is marked VBP.
+   * 3. filter some of the candidates provided in 1 and 2..
+   * 
+   *  @see filterCandidate
+   */
   public List<String> getKeytermCandidates(String text) {
     this.clearCandidates();
     text = text.replaceAll("[0-9]+\\|", "");
@@ -84,8 +99,14 @@ public class SyntaxParsing extends KeytermCandidateFinder{
   }
 
   /**
-   * filter candidate string, currently this method does nothing.. just return false, and therefore
-   * has no effect to the system
+   * filter candidate string, it will return true if and only if:
+   * 1. the string is a VBP and is a form of do and be.
+   * 2. the string contains parenthesis (because if it is a word inside the parenthesis, it should be only the word
+   * without parenthesis, and it will be captured by the LingPipe tagger. Or it should be a phrase that contains part or all
+   * of the parenthesis, therefore not a legitimate keyterm candidate, because none of the gold standard contains parenthesis).
+   * 3. the string starts with a special character
+   * 4. the string ends with a special character.
+   * 5. The string ends with possessive tense (***'s).
    * 
    * @param string
    * @return true if the string is considered (better) to be filtered.

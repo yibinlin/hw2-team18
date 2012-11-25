@@ -10,6 +10,12 @@ import edu.stanford.nlp.pipeline.*;
 import edu.stanford.nlp.util.*;
 import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 
+/**
+ * 
+ * @deprecated no longer used in our CSE pipeline
+ * @author Haohan Wang
+ *
+ */
 public class KeytermExtractorHW2 extends AbstractKeytermExtractor{
   private StanfordCoreNLP pipeline;
 
