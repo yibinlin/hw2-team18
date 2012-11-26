@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.uima.UimaContext;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -120,9 +122,22 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
       while ((strLine = br.readLine()) != null) {
         // Print the content on the console
         System.out.println(strLine);
+        
         List<Keyterm> keyterms = ae.getKeyterms(strLine);
+        
+        Pattern p = Pattern.compile("[0-9]+");
+        Matcher m = p.matcher(strLine);
+        String qid = "";
+        
+        if (m.find()) {
+            qid = m.group(1);
+            qid += "|1 1|";
+        }
+        
         for (Keyterm kt : keyterms) {
-          System.out.println("keyterm: " + kt.getText());
+          String printout = qid;
+          printout += kt;
+          System.out.println(printout);
         }
       }
     } catch (Exception e) {

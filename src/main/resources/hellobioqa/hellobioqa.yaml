@@ -20,13 +20,13 @@ pipeline:
     name: retrieval-strategist
     options: |
       - inherit: hellobioqa.team18.retrieval.retrieval-base
-      - inherit: hellobioqa.retrieval.simple-solr-strategist
+      #- inherit: hellobioqa.retrieval.simple-solr-strategist
           
   - inherit: jdbc.sqlite.cse.phase  
     name: passage-extractor
     options: |
       - inherit: hellobioqa.passage.simple
-      - inherit: hellobioqa.team18.passage.PassageRetrieval
+      #- inherit: hellobioqa.team18.passage.PassageRetrieval
       
   - inherit: helloqa.eval.keyterm-aggregator-consumer
 

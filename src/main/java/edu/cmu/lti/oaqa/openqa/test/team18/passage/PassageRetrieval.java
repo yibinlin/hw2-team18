@@ -68,7 +68,7 @@ public class PassageRetrieval extends SimplePassageExtractor {
       String s2 = null;
       for (Keyterm kt2 : keyterms) {
         s2 = kt2.getText();
-        if (s1.equals(s2)) {
+        if (s1.equals(s2)||s1.contains("\\")) {
           exist = true;
           break;
         }
