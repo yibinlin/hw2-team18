@@ -19,7 +19,7 @@ import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
 import edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorerProduct;
 import edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorerSum;
 import edu.cmu.lti.oaqa.openqa.hello.passage.SimplePassageExtractor;
-import edu.cmu.lti.oaqa.openqa.test.team18.GoParser;
+import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.GoParser;
 
 public class PassageRetrieval extends SimplePassageExtractor {
 
@@ -33,7 +33,7 @@ public class PassageRetrieval extends SimplePassageExtractor {
     for (Keyterm kt : keyterms) {
       List<String> lg = new ArrayList<String>();
       try {
-        GoParser gp = new GoParser("./src/main/resources/synonym.xml");
+        GoParser gp = new GoParser("./src/main/resources/dict/synonym.xml");
         lg = gp.findAllSynonyms(kt.toString());
       } catch (ParserConfigurationException e) {
         e.printStackTrace();

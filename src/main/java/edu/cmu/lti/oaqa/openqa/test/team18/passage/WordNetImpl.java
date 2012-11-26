@@ -10,7 +10,17 @@ import edu.smu.tspell.wordnet.WordNetDatabase;
 
 public class WordNetImpl {
   public static Synset[] wordnet(String s, SynsetType type) {
-    System.setProperty("wordnet.database.dir", "C:/Program Files (x86)/WordNet/2.1/dict");
+    String OS = System.getProperty("os.name").toLowerCase();
+    
+    if(OS.indexOf("win") >= 0)
+    {
+      System.setProperty("wordnet.database.dir", "./src/main/resources/lexicon/dict/");
+    }
+    else
+    {
+      System.setProperty("wordnet.database.dir", "src/main/resources/lexicon/dict");
+    }
+    
 
     WordNetDatabase database = WordNetDatabase.getFileInstance();
 
