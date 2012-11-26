@@ -5,10 +5,18 @@ import java.util.*;
 
 
 
+
+
 public class NihParser {
 	
 	private Map<String,List<String>> dictionary;
 	
+	
+    /**
+	   * Construct dictionary from nih dataset
+	   * @param Path to nih.txt
+	   * @return Instance of NihParser
+	   */
 	public NihParser(String filename) throws IOException{
 		
 		BufferedReader br = new BufferedReader(new FileReader(filename));
