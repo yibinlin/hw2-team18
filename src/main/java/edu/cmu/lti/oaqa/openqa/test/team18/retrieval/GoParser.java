@@ -14,6 +14,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 
+
+
 public class GoParser {
 	
 	
@@ -22,6 +24,17 @@ public class GoParser {
 	private Map<String,Map<String,List<String>>> synonymDictionary;
 	private Set<String> termSet;
 	
+	
+
+	 /**
+	   * Building Ditionary from synonym.xml. This dictionary describes the following concept: Mapping a gene-related term
+	   * to four sets, one for exact matches, one for a broad term that covers the given term, one for narrow terms that 
+	   * are contained under the given term, and one for terms that are related to the given one.
+	   * 
+	   * @param Document
+	   *          Constructed from synonyms.xml
+	   * @return Return the constructed dictionary.
+	   */
 	private Map<String,Map<String,List<String>>> buildDictionary(Document doc){
 		
 		Element root = doc.getDocumentElement();
@@ -63,6 +76,13 @@ public class GoParser {
 		return dictionary;
 	}
 	
+	 /**
+	   * Constructor function 
+	   * @param Filename
+	   *          filepath that points to the synonyms.xml
+	   * @return Return the constructed dictionary using buildDictionary.
+	   */
+	
 	public GoParser (String filename) throws ParserConfigurationException, SAXException, IOException{
 		
         DocumentBuilderFactory dfb = DocumentBuilderFactory.newInstance();  
@@ -71,6 +91,14 @@ public class GoParser {
         this.synonymDictionary = buildDictionary(dom);
 	}
 	
+	
+	 /**
+	   * Find synonyms given a scope 
+	   * @param Gene,Scope
+	   *          Gene specifies the term you are up to, and scope specifies the degree of coverge.
+	   * @return Return the synonyms in a List. If nothing find, return empty list
+	   */
+
 	private List<String> findSynonyms(String gene,String scope){
 		
 		List<String> li = new ArrayList<String> ();
@@ -84,27 +112,62 @@ public class GoParser {
 	
 	}
 	
-	
+	 /**
+	   * Find synonyms that exact matches the term 
+	   * @param Gene
+	   *          Gene specifies the term you are up to.
+	   * @return Return the synonyms in a List. If nothing find, return empty list
+	   */
+
 	public List<String> findExactSynonyms(String gene){
 		
 		return findSynonyms(gene, "exact");
 	}
 	
+	 /**
+	   * Find the related terms to the given term 
+	   * @param Gene
+	   *          Gene specifies the term you are up to.
+	   * @return Return the synonyms in a List. If nothing find, return empty list
+	   */
+
 	public List<String> findRelatedSynonyms(String gene){
 		
 		return findSynonyms(gene, "related");
 	}
+	
+	 /**
+	   * Find terms that are covered by the given term 
+	   * @param Gene
+	   *          Gene specifies the term you are up to.
+	   * @return Return the synonyms in a List. If nothing find, return empty list
+	   */
 	
 	public List<String> findNarrowSynonyms(String gene){
 		
 		return findSynonyms(gene, "narrow");
 	}
 	
+	
+	 /**
+	   * Find terms that covers the given term. 
+	   * @param Gene
+	   *          Gene specifies the term you are up to.
+	   * @return Return the synonyms in a List. If nothing find, return empty list
+	   */
+
 	public List<String> findBroadSynonyms(String gene){
 		
 		return findSynonyms(gene, "broad");
 	}
 	
+	
+	 /**
+	   * Find all the synonyms regardless of scope
+	   * @param Gene
+	   *          Gene specifies the term you are up to.
+	   * @return Return the synonyms in a List. If nothing find, return empty list
+	   */
 	public List<String> findAllSynonyms(String gene){
 		List<String> synonyms = new ArrayList<String> ();
 		if (this.termSet.contains(gene)){
@@ -120,6 +183,14 @@ public class GoParser {
 		return synonyms;
 	}
 	
+	
+	 /**
+	   * Find all the synonyms regardless of scope
+	   * @param Gene
+	   *          Gene specifies the term you are up to.
+	   * @return Return the synonyms in a List. If nothing find, return empty list
+	   */
+
 	public List<String> exhaustedSearchSynonyms(String gene){
 		for(String term:this.termSet){
 			if (term.contains(gene)){
@@ -129,6 +200,12 @@ public class GoParser {
 		return new ArrayList<String> ();
 	}
 	
+
+	 /**
+	   * Return the dictionary
+	   * @param None
+	   * @return Return dictionary
+	   */
 	public Map<String,Map<String,List<String>>> getDictionary(){
 		
 		return this.synonymDictionary;
