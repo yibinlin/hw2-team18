@@ -19,8 +19,8 @@ import edu.stanford.nlp.util.CoreMap;
 
 /**
  * 
- * @deprecated no longer used in our CSE pipeline.
- * @author Yuchen Tian
+ * Used by the StanfordNLPCore Extractor
+ * @author Zi Yang, Yuchen Tian
  *
  */
 public class PosTagNamedEntityRecognizer {
