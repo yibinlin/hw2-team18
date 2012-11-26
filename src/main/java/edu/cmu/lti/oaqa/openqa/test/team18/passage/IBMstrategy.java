@@ -67,6 +67,7 @@ public class IBMstrategy {
     // generate the passages with start and end with a natural sentence
     List<PassageSpan> pspan = getPassageSentences();
     // Generate all the passagespans
+    // passagespans are divided by natural sentences
     for (PassageSpan ps : pspan) {
       Integer leftEdge = ps.begin;
       Integer rightEdge = ps.end;
@@ -75,7 +76,18 @@ public class IBMstrategy {
       if (!rightEdges.contains(rightEdge))
         rightEdges.add(rightEdge);
     }
-
+    // Generate all the passagespans
+    // passagespans are divided by keyterms
+//    for ( List<PassageSpan> keytermMatches : matchingSpans ) {
+//      for ( PassageSpan keytermMatch : keytermMatches ) {
+//        Integer leftEdge = keytermMatch.begin;
+//        Integer rightEdge = keytermMatch.end; 
+//        if (! leftEdges.contains( leftEdge ))
+//          leftEdges.add( leftEdge );
+//        if (! rightEdges.contains( rightEdge ))
+//          rightEdges.add( rightEdge );
+//      }
+//    }
     // For every possible window, calculate keyterms found, matches found; score window, and create
     // passage candidate.
     List<PassageCandidate> result = new ArrayList<PassageCandidate>();
@@ -85,7 +97,7 @@ public class IBMstrategy {
         if (end <= begin)
           continue;
         // In the retrieved passage, a window greater than 500 characters is rarely seen
-        if (end - begin > 500)
+        if (end - begin > 800)
           continue;
         // This code runs for each window.
         pivots.clear();
@@ -152,20 +164,7 @@ public class IBMstrategy {
             }
           }
         }
-//        for (PassageSpan ps1 : pivots) {
-//          for (PassageSpan ps2 : pivots) {
-//            if (ps1 != ps2) {
-//              totalP += Math.abs(ps2.getBegin() - ps1.getBegin());
-//              if (maxP < Math.abs(ps2.getBegin() - ps1.getBegin())) {
-//                maxP = Math.abs(ps2.getBegin() - ps1.getBegin());
-//              }
-//            }
-//          }
-//          totalA += Math.abs(ps1.getBegin() - begin);
-//          if (maxA < Math.abs(ps1.getBegin() - begin)) {
-//            maxA = Math.abs(ps1.getBegin() - begin);
-//          }
-//        }
+
         avgP = totalP / pivots.size();
         avgA = totalA / pivots.size();
         String k = null;
@@ -182,31 +181,31 @@ public class IBMstrategy {
           }
 //          System.out.println(k);
 //          System.out.println("w"+w);
-          dist += (250 / w) * (1 - (ps1.getBegin() - begin) / maxA);
+          dist += ((end-begin) / w) * (1 - (ps1.getBegin() - begin) / maxA);
         }
         double scorePivot = 0;
         // pSize is the number of all the matched keyterms for this sentence
         double pSize = pivots.size();
-        if (pSize>1){
-          System.out.println("rp"+rP);
-          System.out.println("avgP"+avgP);
-          System.out.println("totalP"+totalP);
-          System.out.println("maxP"+maxP);
-          System.out.println("dist"+dist);
-          System.out.println("pSize"+pSize);
-          System.out.println("length"+(end-begin));
-        }
+//        if (pSize>1){
+//          System.out.println("rp"+rP);
+//          System.out.println("avgP"+avgP);
+//          System.out.println("totalP"+totalP);
+//          System.out.println("maxP"+maxP);
+//          System.out.println("dist"+dist);
+//          System.out.println("pSize"+pSize);
+//          System.out.println("length"+(end-begin));
+//        }
         // calculate scorePivot
         scorePivot = rP * (avgP / maxP) * (1 / pSize) * dist;
         PassageCandidate window = null;
         // if scorePivot is meaningful, calculate a new score
         // otherwise, set the score to 0
-        if (pSize>1){
-          System.out.println("scorePivot:"+scorePivot);
-          System.out.println("score:"+score);
-        }
+//        if (pSize>1){
+//          System.out.println("scorePivot:"+scorePivot);
+//          System.out.println("score:"+score);
+//        }
         if (dist != 0.0) {
-          score = score * (scorePivot + 1);
+          score = score*scorePivot*100;
         } else {
           score = 0;
         }
@@ -214,7 +213,7 @@ public class IBMstrategy {
         // generate a result
         if (score >= 0) {
           try {
-            window = new PassageCandidate(docId, begin, end, (float) score, null);
+            window = new PassageCandidate(docId, begin, end, (float) scorePivot, null);
           } catch (AnalysisEngineProcessException e) {
             e.printStackTrace();
           }
@@ -294,7 +293,7 @@ public class IBMstrategy {
     // char[] punc = { '.', '?', '!' };
     // generate the span of natural sentences
     while (j < textSize - 2) {
-      if (text.charAt(j) == '.' && text.charAt(j + 2) >= 'A' && text.charAt(j + 2) <= 'Z') {
+      if ((text.charAt(j) == '.'||text.charAt(j) == ',') && text.charAt(j + 2) >= 'A' && text.charAt(j + 2) <= 'Z') {
         PassageSpan a = new PassageSpan(i, j);
         span.add(a);
         i = j + 2;
