@@ -121,7 +121,7 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
       // Read File Line By Line
       while ((strLine = br.readLine()) != null) {
         // Print the content on the console
-        System.out.println(strLine);
+        //System.out.println(strLine);
         
         List<Keyterm> keyterms = ae.getKeyterms(strLine);
         
@@ -130,7 +130,7 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
         String qid = "";
         
         if (m.find()) {
-            qid = m.group(1);
+            qid = m.group();
             qid += "|1 1|";
         }
         
