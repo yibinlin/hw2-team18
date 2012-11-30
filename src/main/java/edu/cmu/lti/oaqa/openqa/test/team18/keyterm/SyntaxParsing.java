@@ -109,7 +109,7 @@ public class SyntaxParsing extends KeytermCandidateFinder{
    * 5. The string ends with possessive tense (***'s).
    * 
    * @param string
-   * @return true if the string is considered (better) to be filtered.
+   * @return true if the string is considered (better) to be filtered. 
    */
   private boolean filterCandidate(String string, Tree node) {
     if(string.matches("[0-9]+ .*"))
