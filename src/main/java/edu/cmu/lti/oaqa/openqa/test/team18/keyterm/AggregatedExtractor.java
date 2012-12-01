@@ -29,6 +29,8 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
   SyntaxParsing sp;
 
   LingPipeNER lpn;
+  
+  DashKiller dk;
 
   @Override
   /**
@@ -39,9 +41,10 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
    * "super.initialize(...)" 
    */
   public void initialize(UimaContext aContext) throws ResourceInitializationException {
-    super.initialize(aContext);
+    //super.initialize(aContext);
     sp = new SyntaxParsing();
     lpn = new LingPipeNER();
+    dk = new DashKiller();
   }
 
   @Override
@@ -57,9 +60,10 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
     LinkedList<Keyterm> res = new LinkedList<Keyterm>();
     List<String> synCandidates = sp.getKeytermCandidates(question);
     // TBD
-    this.log("Starting to get keyterms from StanfordCoreNLP...");
+    //this.log("Starting to get keyterms from StanfordCoreNLP...");
     List<String> lingpipeCandidates = lpn.getKeytermCandidates(question);
-    this.log("Starting to get keyterms from Lingpipe...");
+    //this.log("Starting to get keyterms from Lingpipe...");
+    List<String> dkCandidates = dk.getKeytermCandidates(question);
 
     // System.out.println(synCandidates);
     // System.out.println(lingpipeCandidates);
@@ -74,6 +78,14 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
       if (question.contains(s)) {
         if (!findKeyterm(res, s)) {
           res.addFirst(new Keyterm(s));
+        }
+      }
+    }
+    
+    for (String s : dkCandidates) {
+      if (question.contains(s)) {
+        if (!findKeyterm(res, s)) {
+          res.add(new Keyterm(s));
         }
       }
     }
