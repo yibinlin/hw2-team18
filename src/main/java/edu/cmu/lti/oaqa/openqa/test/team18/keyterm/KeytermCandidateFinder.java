@@ -53,6 +53,21 @@ public abstract class KeytermCandidateFinder {
   }
   
   /**
+   * check is the current candidate already contains (include) a string s as the substring/itself
+   * @param s the string
+   * @return true if so.
+   */
+  boolean candidateContains(String s)
+  {
+    for (String c : candidates)
+    {
+      if (c.contains(s))
+        return true;
+    }
+    return false;
+  }
+  
+  /**
    * An interface that are implemented by the subclasses. The AggregatedExtractor will call
    * this method to get the String list of keyterm candidates and then try to convert them to 
    * Keyterm objects.  
