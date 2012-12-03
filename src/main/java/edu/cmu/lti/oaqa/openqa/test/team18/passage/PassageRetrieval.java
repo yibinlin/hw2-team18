@@ -20,8 +20,6 @@ import edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorerProduct;
 import edu.cmu.lti.oaqa.openqa.hello.passage.KeytermWindowScorerSum;
 import edu.cmu.lti.oaqa.openqa.hello.passage.SimplePassageExtractor;
 import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.GoParser;
-<<<<<<< HEAD
-=======
 import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.NihParser;
 import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.WikiRedirectParser;
 
