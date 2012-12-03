@@ -43,6 +43,7 @@ import org.xml.sax.SAXException;
 /**
  * 
  * @author Zi Yang <ziy@cs.cmu.edu>
+ * @author Yuchen Tian <yuchent@cmu.edu>
  * 
  */
 public class Retrieval_Base extends AbstractRetrievalStrategist {
@@ -53,8 +54,14 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
   
   protected GoParser goParser;
   protected NihParser nihParser;
+  private List<Keyterm> keyterms;
 
   @Override
+	 /**
+	   * Initialize parsers
+	   *
+	   * @return nothing
+	   */
   public void initialize(UimaContext aContext) throws ResourceInitializationException {
     super.initialize(aContext);
     try {
@@ -95,20 +102,26 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
   }
 
   @Override
+
+	 /**
+	   * Wrapper for retrieval documents,given keyterm and question
+	   * @param List of keyterms,and question
+	   * @return Return list of retrieved documents
+	   */
   protected final List<RetrievalResult> retrieveDocuments(String questionText,
           List<Keyterm> keyterms) {
 	//System.out.println("QuestionText:"+questionText);
     String query = formulateQuery(keyterms);
+    this.keyterms = keyterms;
     return retrieveDocuments(query);
   };
   
-  protected List<String> findSynonyms(String keyword){
-	  
-	  return new ArrayList<String>();
-  }
-  
- 
-  
+
+     /**
+	   * Expand user query using two dictionaries, NIH dictionary and GO database.
+	   * @param List of Keyterms
+	   * @return Return the synonyms in a List. If nothing find, return empty list
+	   */
   protected List<String> expandQuery(List<Keyterm> keyterms){
 	  List<String> relatedWords = new ArrayList<String> ();
 	  for(Keyterm key:keyterms){
@@ -125,39 +138,96 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
 	  return relatedWords;
   }
   
+  /**
+	   * Check whether a phrase has two or more words
+	   * @param Phrase
+	   * @return Return true if the phrase has more than one word, else false.
+	   */
+  private Boolean hasTwoMoreWords(String line){
+    String text = line;
+  	String[] words = text.split(" ");
+  	if(words.length > 2) return true;
+  	else return false;
+  }
+  
+  private List<String> breakKeyterms(List<Keyterm> keyterms){
+	  List<String> terms = new ArrayList<String> ();
+	  for(Keyterm k:keyterms){
+		  String text = k.getText();
+		  String[] ts = text.split(" ");
+		  for(int i=0; i < ts.length ; i++){
+			  terms.add(ts[i].toLowerCase());
+		  }
+	  }
+	  return terms;
 
+  }
+  
+  /**
+	   * Put the keyterms into the following format: +(keyterm1 keyterm2 keyterm3 ... relatedWord1 relatedWord2...) phrase1~1000 phrase2~1000
+	   * @param List of Keyterms
+	   * @return Return formulated query.
+	   */
   protected String formulateQuery(List<Keyterm> keyterms) {
     StringBuffer result = new StringBuffer();
     
     List<String> relatedWords = expandQuery(keyterms);
     
+    
     result.append("+(");
     for(int i=0; i < keyterms.size()-1; i++){
-    	result.append(keyterms.get(i).getText() + " OR ");
+    	if(hasTwoMoreWords(keyterms.get(i).getText())){
+    		result.append("\"" + keyterms.get(i).getText() + "\" ");
+    	}
+    	else{
+    		result.append("" + keyterms.get(i).getText() + " ");
+    	}
     }
     
     for(int i=0; i< relatedWords.size(); i++){
-    	result.append(relatedWords.get(i) + " OR ");
+    	
+    	String rw = relatedWords.get(i);
+    	if(hasTwoMoreWords(rw)){
+    		result.append("\"" + rw + "\" ");
+    	}
+    	else{
+    		result.append("" + relatedWords.get(i) + " ");
+    	}
+
     }
-    
-    result.append(keyterms.get(keyterms.size()-1).getText() + ") ");
+    if(hasTwoMoreWords(keyterms.get(keyterms.size()-1).getText())){
+    	result.append("\"" + keyterms.get(keyterms.size()-1).getText() + "\") ");
+    }
+    else{
+    	result.append(keyterms.get(keyterms.size()-1).getText() + ") ");
+    }
 
     for(int i=0; i < keyterms.size(); i++){
-    	result.append(keyterms.get(i).getText()+"^10 ");
+    	if(hasTwoMoreWords(keyterms.get(i).getText())){
+    		result.append("\""+keyterms.get(i).getText()+"\"~1500 ");
+    	}
     }
     String query = result.toString();
     System.out.println("Lucene Query:" + query);
-    return query;
+    return query.toLowerCase();
   }
 
-  
+  /**
+	   * Run query from remote solr server
+	   * @param Query
+	   * @return List of Retrieval Results Class
+	   */
   protected List<RetrievalResult> retrieveDocuments(String query) {
     List<RetrievalResult> result = new ArrayList<RetrievalResult>();
     try {
       SolrDocumentList docs = wrapper.runQuery(query, hitListSize);
+      List<String> queryTerms = breakKeyterms(this.keyterms);
+      //OkapiBM25 ok = new OkapiBM25(docs);
+      //return ok.BM25Rank(queryTerms, 1.5, 0.75, query);
+      
       for (SolrDocument doc : docs) {
     	
-    	/*
+    	
     	System.out.println("Fields");
     	
     	Collection<String> fields = doc.getFieldNames();
@@ -165,7 +235,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
     	while(iter.hasNext()){
     		String f = iter.next();
     		System.out.println(f);
-    	}*/
+    	}
     	  
     	
     	RetrievalResult r = new RetrievalResult((String) doc.getFieldValue("id"),

@@ -15,17 +15,20 @@ pipeline:
     name: keyterm-extractor
     options: |
       - inherit: hellobioqa.team18.keyterm.goldenstandard
+      #- inherit: helloqa.keyterm.simple
 
   - inherit: jdbc.sqlite.cse.phase 
     name: retrieval-strategist
     options: |
       - inherit: hellobioqa.team18.retrieval.retrieval-base
-          
+      #- inherit: hellobioqa.retrieval.simple-solr-strategist
+         
   - inherit: jdbc.sqlite.cse.phase  
     name: passage-extractor
     options: |
-      - inherit: hellobioqa.passage.simple
+      #- inherit: hellobioqa.passage.simple
       - inherit: hellobioqa.team18.passage.PassageRetrieval
+      #- inherit: hellobioqa.team18.passage.ShowPassageResult
       
   - inherit: helloqa.eval.keyterm-aggregator-consumer
 
