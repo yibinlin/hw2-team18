@@ -54,6 +54,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
   
   protected GoParser goParser;
   protected NihParser nihParser;
+  private List<Keyterm> keyterms;
 
   @Override
 	 /**
@@ -111,6 +112,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
           List<Keyterm> keyterms) {
 	//System.out.println("QuestionText:"+questionText);
     String query = formulateQuery(keyterms);
+    this.keyterms = keyterms;
     return retrieveDocuments(query);
   };
   
@@ -148,6 +150,18 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
   	else return false;
   }
   
+  private List<String> breakKeyterms(List<Keyterm> keyterms){
+	  List<String> terms = new ArrayList<String> ();
+	  for(Keyterm k:keyterms){
+		  String text = k.getText();
+		  String[] ts = text.split(" ");
+		  for(int i=0; i < ts.length ; i++){
+			  terms.add(ts[i].toLowerCase());
+		  }
+	  }
+	  return terms;
+
+  }
   
   /**
 	   * Put the keyterms into the following format: +(keyterm1 keyterm2 keyterm3 ... relatedWord1 relatedWord2...) phrase1~1000 phrase2~1000
@@ -195,7 +209,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
     }
     String query = result.toString();
     System.out.println("Lucene Query:" + query);
-    return query;
+    return query.toLowerCase();
   }
 
   /**
@@ -207,9 +221,13 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
     List<RetrievalResult> result = new ArrayList<RetrievalResult>();
     try {
       SolrDocumentList docs = wrapper.runQuery(query, hitListSize);
+      List<String> queryTerms = breakKeyterms(this.keyterms);
+      //OkapiBM25 ok = new OkapiBM25(docs);
+      //return ok.BM25Rank(queryTerms, 1.5, 0.75, query);
+      
       for (SolrDocument doc : docs) {
     	
-    	/*
+    	
     	System.out.println("Fields");
     	
     	Collection<String> fields = doc.getFieldNames();
@@ -217,7 +235,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
     	while(iter.hasNext()){
     		String f = iter.next();
     		System.out.println(f);
-    	}*/
+    	}
     	  
     	
     	RetrievalResult r = new RetrievalResult((String) doc.getFieldValue("id"),
