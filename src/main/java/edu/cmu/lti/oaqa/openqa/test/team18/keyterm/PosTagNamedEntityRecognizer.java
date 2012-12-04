@@ -17,7 +17,12 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 
-//??
+/**
+ * 
+ * Used by the StanfordNLPCore Extractor
+ * @author Zi Yang, Yuchen Tian
+ *
+ */
 public class PosTagNamedEntityRecognizer {
 
   private StanfordCoreNLP pipeline;

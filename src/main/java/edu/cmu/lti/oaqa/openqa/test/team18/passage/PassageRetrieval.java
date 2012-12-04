@@ -23,16 +23,69 @@ import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.GoParser;
 import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.NihParser;
 import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.WikiRedirectParser;
 
+
 public class PassageRetrieval extends SimplePassageExtractor {
 
   @Override
   protected List<PassageCandidate> extractPassages(String question, List<Keyterm> keyterms,
           List<RetrievalResult> documents) {
     List<PassageCandidate> result = new ArrayList<PassageCandidate>();
+
+    List<Keyterm> newK = new ArrayList<Keyterm>();
+    //Search for synonyms of gene of Keyterms
+    //find all sysnonyms and add to a list newK
+//    for (Keyterm kt : keyterms) {
+//      List<String> lg = new ArrayList<String>();
+//      try {
+//        GoParser gp = new GoParser("./src/main/resources/dict/synonym.xml");
+//        lg = gp.findAllSynonyms(kt.toString());
+//      } catch (ParserConfigurationException e) {
+//        e.printStackTrace();
+//      } catch (SAXException e) {
+//        e.printStackTrace();
+//      } catch (IOException e) {
+//        e.printStackTrace();
+//      }
+//      for (String s : lg) {
+//        Keyterm newk = new Keyterm(s);
+//        newK.add(newk);
+//      }
+//    }
+//    //search for synonyms of verbs of Keyterms
+//    //Add all synonyms into list newK
+//    for (Keyterm kt : keyterms) {
+//      List<String> ls = WordNetImpl.searchForSynonyms(kt.toString());
+//      for (String s : ls) {
+//        Keyterm newk = new Keyterm(s);
+//        newK.add(newk);
+//      }
+//    }
+////    for (Keyterm kt: keyterms){
+////      System.out.println(kt);
+////    }
+//    //add the Keyterms in newK to list Keyterm
+//    //before add, search Keyterms to make sure all the keyterms in list Keyeterms are unique. 
+//    boolean exist = false;
+//    for (Keyterm kt : newK) {
+//      exist = false;
+//      String s1 = kt.getText();
+//      String s2 = null;
+//      for (Keyterm kt2 : keyterms) {
+//        s2 = kt2.getText();
+//        if (s1.equals(s2)||s1.contains("\\")) {
+//          exist = true;
+//          break;
+//        }
+//      }
+//      if (!exist) {
+//        keyterms.add(kt);
+//      }
+//=======
     List<Keyterm> rkeyterms = new ArrayList<Keyterm>();
     int total = keyterms.size()-1;
     for (int i=total;i>=0;i--){
       rkeyterms.add(keyterms.get(i));
+//>>>>>>> HaohanWang
     }
     List<List<String>> keytermM = getSynonyms(rkeyterms);
     //find the sysnonyms of keyterms

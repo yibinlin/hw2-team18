@@ -12,6 +12,11 @@ import com.aliasi.util.AbstractExternalizable;
 import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
+/**
+ * @deprecated no longer used in our cse pipeline.
+ * @author Haohan Wang
+ *
+ */
 public class KeytermExtractorHW extends AbstractKeytermExtractor {
 
   @Override

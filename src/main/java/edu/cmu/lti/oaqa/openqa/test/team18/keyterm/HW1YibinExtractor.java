@@ -16,6 +16,12 @@ import com.aliasi.util.AbstractExternalizable;
 import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
+/**
+ * 
+ * @deprecated no longer used in our CSE pipeline
+ * @author Yibin Lin
+ *
+ */
 public class HW1YibinExtractor extends AbstractKeytermExtractor {
 
   /**

@@ -9,8 +9,19 @@ import edu.smu.tspell.wordnet.SynsetType;
 import edu.smu.tspell.wordnet.WordNetDatabase;
 
 public class WordNetImpl {
-  public static Synset[] wordnet(String s) {
-    System.setProperty("wordnet.database.dir", "C:/Program Files (x86)/WordNet/2.1/dict");
+
+  public static Synset[] wordnet(String s, SynsetType type) {
+    String OS = System.getProperty("os.name").toLowerCase();
+    
+    if(OS.indexOf("win") >= 0)
+    {
+      System.setProperty("wordnet.database.dir", "./src/main/resources/lexicon/dict/");
+    }
+    else
+    {
+      System.setProperty("wordnet.database.dir", "src/main/resources/lexicon/dict");
+    }
+    
 
     WordNetDatabase database = WordNetDatabase.getFileInstance();
 
@@ -27,7 +38,7 @@ public class WordNetImpl {
   }
   
   public static List<String> searchForSynonyms(String word){
-    Synset[] synsets=WordNetImpl.wordnet(word);
+    //Synset[] synsets=WordNetImpl.wordnet(word);
     List<String> result = new ArrayList<String>();
     for (Synset ss:synsets){
       String s=ss.toString();
@@ -61,15 +72,15 @@ public class WordNetImpl {
     return result;
   }
   
-  public static void main (String args[]){
-    String m="be";
-    Synset [] synsets = WordNetImpl.wordnet(m);
-    for (Synset ss:synsets){
-      System.out.println(ss);
-    }
-    List<String> ls = WordNetImpl.searchForSynonyms(m);
-    for (String s:ls){
-      System.out.println(s);
-    }
-  }
+//  public static void main (String args[]){
+//    String m="be";
+//    Synset [] synsets = WordNetImpl.wordnet(m);
+//    for (Synset ss:synsets){
+//      System.out.println(ss);
+//    }
+//    List<String> ls = WordNetImpl.searchForSynonyms(m);
+//    for (String s:ls){
+//      System.out.println(s);
+//    }
+//  }
 }
