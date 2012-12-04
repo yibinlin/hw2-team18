@@ -54,6 +54,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
   
   protected GoParser goParser;
   protected NihParser nihParser;
+  protected WikiRedirectParser wikiParser;
   private List<Keyterm> keyterms;
 
   @Override
@@ -90,6 +91,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
 	}
+    this.wikiParser = new WikiRedirectParser();
     String serverUrl = (String) aContext.getConfigParameterValue("server");
     Integer serverPort = (Integer) aContext.getConfigParameterValue("port");
     Boolean embedded = (Boolean) aContext.getConfigParameterValue("embedded");
@@ -133,6 +135,17 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
 		  List<String> nihList = this.nihParser.findSynonyms(word);
 		  for(String rw:nihList){
 			  relatedWords.add(rw);
+		  }
+		  List<String> wikiList = this.wikiParser.findSynonyms(word);
+		  int wikisize = 0;
+		  if (wikiList.size() > 2){
+			  wikisize = 2;
+		  }
+		  else{
+			  wikisize = wikiList.size();
+		  }
+		  for(int i=0;i<wikisize;i++){
+			  //relatedWords.add(wikiList.get(i));
 		  }
 	  }
 	  return relatedWords;
