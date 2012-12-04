@@ -9,12 +9,12 @@ import edu.smu.tspell.wordnet.SynsetType;
 import edu.smu.tspell.wordnet.WordNetDatabase;
 
 public class WordNetImpl {
-  public static Synset[] wordnet(String s, SynsetType type) {
+  public static Synset[] wordnet(String s) {
     System.setProperty("wordnet.database.dir", "C:/Program Files (x86)/WordNet/2.1/dict");
 
     WordNetDatabase database = WordNetDatabase.getFileInstance();
 
-    Synset[] synsets = database.getSynsets(s, type);
+    Synset[] synsets = database.getSynsets(s, SynsetType.NOUN);
 
     //String[] synsets2 = database.getBaseFormCandidates(s, type);
 
@@ -27,7 +27,7 @@ public class WordNetImpl {
   }
   
   public static List<String> searchForSynonyms(String word){
-    Synset[] synsets=WordNetImpl.wordnet(word, SynsetType.VERB);
+    Synset[] synsets=WordNetImpl.wordnet(word);
     List<String> result = new ArrayList<String>();
     for (Synset ss:synsets){
       String s=ss.toString();
@@ -63,7 +63,7 @@ public class WordNetImpl {
   
   public static void main (String args[]){
     String m="be";
-    Synset [] synsets = WordNetImpl.wordnet(m, SynsetType.VERB);
+    Synset [] synsets = WordNetImpl.wordnet(m);
     for (Synset ss:synsets){
       System.out.println(ss);
     }
