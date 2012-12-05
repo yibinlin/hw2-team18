@@ -24,15 +24,21 @@ import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.NihParser;
 import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.WikiRedirectParser;
 
 /**
- * @author Haohan Wang
  * Main class for passgage retrieval
  * Get the text and keyterms ready
  * and call other classes to generate the passage
+ * @author Haohan Wang
  */
 
 public class PassageRetrieval extends SimplePassageExtractor {
 
-  @Override
+  /**
+   * extractPassages
+   * @param question, keyterms, documents
+   * input are the question, the keyterms from the first phase and the document id from second phase
+   * @return result
+   * return the extracted list of PassageCandidate
+   */
   protected List<PassageCandidate> extractPassages(String question, List<Keyterm> keyterms,
           List<RetrievalResult> documents) {
     List<PassageCandidate> result = new ArrayList<PassageCandidate>();

@@ -26,12 +26,11 @@ import edu.cmu.lti.oaqa.openqa.test.team18.passage.SiteQwithMatrix.PassageSpan;
 import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.GoParser;
 import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.NihParser;
 /**
- * 
- * @author Haohan Wang
  * implementation of siteQ with matrix of keyterms
  * siteQ is from TREC10
  * the matrix reflects different weight for weight from concept level and word level from TREC2006
- * and some our own trials to improve MAP
+ * and some our own trials to improve MAP 
+ * @author Haohan Wang
  */
 public class SiteQwithMatrix {
   private String text;
@@ -228,10 +227,10 @@ public class SiteQwithMatrix {
   }
   /**
    * class KeytermHit
-   * @author Haohan Wang
    * this class is a structure to restore the information of a matched Keyterm
    * the information are the offset(begin, end) of this keyterm in the target sentence
    * and the concept weight(row) and word weight(line) of this keyterm
+   * @author Haohan Wang
    */
   class KeytermHit {
     private int begin, end;

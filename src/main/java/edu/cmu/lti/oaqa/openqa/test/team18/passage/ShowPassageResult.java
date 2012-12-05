@@ -18,7 +18,13 @@ import edu.cmu.lti.oaqa.framework.data.Keyterm;
 import edu.cmu.lti.oaqa.framework.data.PassageCandidate;
 import edu.cmu.lti.oaqa.framework.data.RetrievalResult;
 import edu.cmu.lti.oaqa.openqa.hello.passage.SimplePassageExtractor;
-
+/**
+ * This class is used to extract the correct answer
+ * only used when we need figure out better ways of extraction
+ * @deprecated
+ * @author Haohan Wang
+ *
+ */
 public class ShowPassageResult extends SimplePassageExtractor {
   @SuppressWarnings("null")
   protected List<PassageCandidate> extractPassages(String question, List<Keyterm> keyterms,

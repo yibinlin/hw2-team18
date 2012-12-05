@@ -7,7 +7,11 @@ import edu.smu.tspell.wordnet.NounSynset;
 import edu.smu.tspell.wordnet.Synset;
 import edu.smu.tspell.wordnet.SynsetType;
 import edu.smu.tspell.wordnet.WordNetDatabase;
-
+/**
+ * @deprecated
+ * @author Haohan Wang
+ *
+ */
 public class WordNetImpl {
 
   public static Synset[] wordnet(String s, SynsetType type) {
