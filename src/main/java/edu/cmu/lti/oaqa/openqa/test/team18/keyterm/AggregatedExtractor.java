@@ -14,7 +14,7 @@ import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
 /**
- * The Aggregated Extractor uses both Stanford CoreNLP and 
+ * The Aggregated Extractor uses all Stanford CoreNLP, "Dash Killer" 
  * LingPipe Gene Tagger. It also places the output of LingPipe Gene 
  * Tagger at the beginning of the result list.
  * 
@@ -26,15 +26,24 @@ import edu.cmu.lti.oaqa.framework.data.Keyterm;
  */
 public class AggregatedExtractor extends AbstractKeytermExtractor {
 
+  /**
+   * Instance of syntax parsing keyterm candidate finder.
+   */
   SyntaxParsing sp;
 
+  /**
+   * Instance of Lingpipe keyterm candidate finder.
+   */
   LingPipeNER lpn;
   
-  DashKiller dk;
-
-  @Override
   /**
-   * initialize StanfordCoreNLP and Lingpipe by initializing the 
+   * Instace of Dash Killer keyterm candidate finder.
+   * @see DashKiller
+   */
+  DashKiller dk;
+  /**
+
+   * initialize StanfordCoreNLP, DashKiller and Lingpipe by initializing the 
    * constructors of SyntaxParsing and LingPipeNER object.
    * 
    * Every time we are testing, we need to comment out the line
@@ -47,7 +56,6 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
     dk = new DashKiller();
   }
 
-  @Override
   /**
    * Get Keyterms using both Stanford CoreNLP Syntax Parser and 
    * LingPipe package. 
@@ -114,7 +122,8 @@ public class AggregatedExtractor extends AbstractKeytermExtractor {
   }
 
   /**
-   * Only for internal testing purposes. It is not in the pipeline. 
+   * 
+   * @deprecated Only for internal testing purposes. It is not in the pipeline. 
    * @param args
    */
   public static void main(String[] args) {
