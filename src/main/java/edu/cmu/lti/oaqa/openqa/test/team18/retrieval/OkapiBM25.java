@@ -27,6 +27,11 @@ import org.xml.sax.SAXException;
 
 public class OkapiBM25 {
 	
+    /**
+	   * Helper function, input a Map and return a List of keys sorted by the value
+	   * @param Map m
+	   * @return List keys
+	   */
 	public static List sortByValue(final Map m) {
         List keys = new ArrayList();
         keys.addAll(m.keySet());
@@ -48,6 +53,9 @@ public class OkapiBM25 {
         return keys;
     }
 	
+    /**
+	   * Inner class, contains three fields, termFrequency vector, document length, and a Solrdocument Class
+	   */
 	private class MetaDocument{
 		public Map<String,Integer> termFrequency;
 		public int length;
@@ -81,6 +89,11 @@ public class OkapiBM25 {
 	
 	private List<MetaDocument> docs;
 	
+    /**
+	   * Input the query words and output the termIDF based on the retrievaled documents.
+	   * @param List of words
+	   * @return Map<String,Double> -> Word,IDF
+	   */
 	private Map<String,Double> getTermIDF(List<String> words){
 		int N = this.docs.size();
 		Map<String,Double> idf = new HashMap<String,Double>();
@@ -96,6 +109,11 @@ public class OkapiBM25 {
 		return idf;
 	}
 	
+    /**
+	   * Input the query words and output the termIDF based on the retrievaled documents.
+	   * @param List of words
+	   * @return Map<String,Double> -> Word,IDF
+	   */
 	public OkapiBM25(SolrDocumentList docs){
 		
 		this.docs = new ArrayList<MetaDocument>();
@@ -106,7 +124,11 @@ public class OkapiBM25 {
 		}
 	}
 	
-	
+    /**
+	   * Okapi Rerank function based on three parameters: query words, k and b. 
+	   * @param List of terms in the query, parameter k, parameter b, and the orginal query(used to keep consistent with the original framework)
+	   * @return List of RetrievalResult
+	   */
 	public List<RetrievalResult> BM25Rank(List<String> queryTerms,double k,double b,String query){
 		List<RetrievalResult> result = new ArrayList<RetrievalResult>();
 		Map<MetaDocument,Double> rank = new HashMap<MetaDocument,Double>();
