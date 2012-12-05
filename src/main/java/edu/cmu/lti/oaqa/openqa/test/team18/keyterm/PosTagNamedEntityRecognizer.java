@@ -19,7 +19,8 @@ import edu.stanford.nlp.util.CoreMap;
 
 /**
  * 
- * Used by the StanfordNLPCore Extractor
+ * Used by the StanfordNLPCore Extractor in hw1.
+ * @deprecated no longer used in cse framework, part of hw1.
  * @author Zi Yang, Yuchen Tian
  *
  */

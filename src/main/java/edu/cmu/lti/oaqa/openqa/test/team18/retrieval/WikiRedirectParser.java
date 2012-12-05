@@ -32,6 +32,15 @@ public class WikiRedirectParser {
 
   public static final int PORT = 8080;
 
+  /**
+   * Find synonyms. If a keyterm is a alias (redirected word) in Wikipedia, return the 
+   * authentic main word in Wikipedia.<br>
+   * 
+   * If a keyterm is an authentic main word in Wikipediam, then return all its aliases (redirects).
+   * 
+   * @param aKeyterm a keyterm produced in keytern extraction phase.
+   * @return its synonyms as described above.
+   */
   public List<String> findSynonyms(String aKeyterm) {
     List<String> res = new LinkedList<String>();
     

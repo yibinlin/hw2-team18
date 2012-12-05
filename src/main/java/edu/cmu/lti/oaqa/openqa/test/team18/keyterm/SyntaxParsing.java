@@ -26,8 +26,16 @@ import edu.stanford.nlp.util.CoreMap;
  * 
  */
 public class SyntaxParsing extends KeytermCandidateFinder {
+  /**
+   * instance of StanfordCoreNLP
+   */
   private StanfordCoreNLP pipeline;
 
+  /**
+   * instance of Morphology, also part of StanfordCoreNLP, used by the filterCandidate method.
+   * 
+   * @see filterCandidate
+   */
   private Morphology morph;
 
   private static final String UNIGRAM_PATH = "src/main/resources/lexicon/cmudict.0.7a.gigaword.freq";
@@ -35,7 +43,7 @@ public class SyntaxParsing extends KeytermCandidateFinder {
   private ArrayList<WordCount> wordCounts;
 
   /**
-   * Constructor, initialize StanfordCoreNLP and Morphology.
+   * Constructor, initialize StanfordCoreNLP and Morphology from StanfordCoreNLP, and load the sorted unigram counts. 
    * 
    * @throws ResourceInitializationException
    */
@@ -76,7 +84,7 @@ public class SyntaxParsing extends KeytermCandidateFinder {
   }
 
   /**
-   * Build a unigram word count from a file
+   * Build a unigram word count from a unigram file
    * 
    * @param unigramf
    */
@@ -131,6 +139,8 @@ public class SyntaxParsing extends KeytermCandidateFinder {
    * 
    * @param node
    *          current node we are searching, used in the recursive call.
+   *          
+   * @see filterCandidate
    */
   private void goThroughTree(Tree node) {
     if (node == null) {
@@ -152,9 +162,14 @@ public class SyntaxParsing extends KeytermCandidateFinder {
   }
 
   /**
+   * The post processing of the strings. The problem arises when the StanfordCoreNLP 
+   * syntax parse separate the proper noun and the "'s" into two words, therefore creating an 
+   * empty space between them. The postprocessing method delete the gap between the proper noun 
+   * and the "'s".
    * 
-   * @param s
-   * @return
+   * @param s the string that is guessed to be a keyterm.
+   * @return it now deletes the possession form, e.g: "the student 's", will be
+   * "the student's". 
    */
   private String postprocessing(String s) {
     s = s.replaceAll(" 's", "'s");
@@ -162,13 +177,25 @@ public class SyntaxParsing extends KeytermCandidateFinder {
   }
 
   /**
-   * filter candidate string, it will return true if and only if: 1. the string is a VBP and is a
-   * form of do and be. 2. the string contains parenthesis (because if it is a word inside the
+   * filter candidate string, it will return true if and only if: <br> 
+   * 
+   * 1. the string is a VBP and is a form of do and be.<br> 
+   * 
+   * 2. the string contains parenthesis (because if it is a word inside the
    * parenthesis, it should be only the word without parenthesis, and it will be captured by the
    * LingPipe tagger. Or it should be a phrase that contains part or all of the parenthesis,
    * therefore not a legitimate keyterm candidate, because none of the gold standard contains
-   * parenthesis). 3. the string starts with a special character 4. the string ends with a special
-   * character. 5. The string ends with possessive tense (***'s).
+   * parenthesis). <br> 
+   * 
+   * 3. the string starts with a special character <br> 
+   * 
+   * 4. the string ends with a special character. <br>
+   * 
+   * 5. The string ends with possessive tense (***'s). <br>
+   * 
+   * 6. The string is a single token, and it is a noun, and it is a frequent word. <br>
+   * 
+   * 7. The string matches an previously generated candidate exactly. <br>
    * 
    * @param string
    * @return true if the string is considered (better) to be filtered.
@@ -196,7 +223,7 @@ public class SyntaxParsing extends KeytermCandidateFinder {
       return true;
     } else if (!string.contains(" ") && node.label().value().startsWith("NN")
             && isFrequentWord(string))
-    // if it is a single token, and it is a noun, then we check whether it is
+    // if it is a single token, and it is a noun, then we check whether it is a frequent word.
     {
       return true;
     } else if (node.label().value().startsWith("NN") && candidateContains(string))

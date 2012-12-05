@@ -15,7 +15,7 @@ import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
 /**
  * 
- * @deprecated No longer used in the CSE pipeline. 
+ * @deprecated No longer used in the CSE pipeline, part of hw1.
  * @author Yuchen Tian
  *
  */

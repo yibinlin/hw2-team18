@@ -6,7 +6,9 @@ import java.util.List;
 /**
  * This abstract class is corresponding to the concept of finding keyterm candidates (but 
  * not the final answer set). Therefore, it has a List of candidates, and some methods to 
- * add a new keyterm candiate, and clear the list.
+ * add a new keyterm candiate, and clear the list. <br>
+ * 
+ * The design pattern used here is, obviously, polymorphism and inheritance. <br>
  * 
  * @author Yibin Lin
  *
