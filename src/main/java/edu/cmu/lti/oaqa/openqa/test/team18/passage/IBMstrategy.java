@@ -19,7 +19,13 @@ import edu.cmu.lti.oaqa.openqa.hello.passage.PassageCandidateFinder;
 import edu.cmu.lti.oaqa.openqa.test.team18.passage.IBMstrategy.PassageSpan;
 
 //import edu.cmu.lti.oaqa.openqa.hello.passage.PassageCandidateFinder.PassageSpan;
-
+/**
+ * 
+ * @author Haohan Wang
+ * First temp of using IBM strategy in trec06 name this class for that
+ * Then try to implement siteQ
+ * Finally abandon this class
+ */
 public class IBMstrategy {
   private String text;
 

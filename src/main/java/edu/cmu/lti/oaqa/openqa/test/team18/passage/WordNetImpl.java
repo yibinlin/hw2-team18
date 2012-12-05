@@ -37,40 +37,40 @@ public class WordNetImpl {
     return synsets;
   }
   
-  public static List<String> searchForSynonyms(String word){
-    //Synset[] synsets=WordNetImpl.wordnet(word);
-    List<String> result = new ArrayList<String>();
-    for (Synset ss:synsets){
-      String s=ss.toString();
-      String r=null;
-      int start=0, end=0;
-      for (int i=0;i<=s.length()-1;i++){
-        if (s.charAt(i)=='['){
-          start=i;
-        }
-        if (s.charAt(i)==']'){
-          end=i;
-          break;
-        }
-      }
-      start=start+1;
-      for (int i=start;i<=end;i++){
-        if (s.charAt(i)==','){
-          r=s.substring(start, i);
-          //System.out.println(r.compareTo(word));
-          if (r.compareTo(word)!=0){
-            result.add(r);
-          }
-          start=i+1;
-        }
-      }
-      r=s.substring(start,end);
-      if (r.compareTo(word)!=0){
-        result.add(r);
-      }
-    }
-    return result;
-  }
+//  public static List<String> searchForSynonyms(String word){
+//    //Synset[] synsets=WordNetImpl.wordnet(word);
+//    List<String> result = new ArrayList<String>();
+//    for (Synset ss:synsets){
+//      String s=ss.toString();
+//      String r=null;
+//      int start=0, end=0;
+//      for (int i=0;i<=s.length()-1;i++){
+//        if (s.charAt(i)=='['){
+//          start=i;
+//        }
+//        if (s.charAt(i)==']'){
+//          end=i;
+//          break;
+//        }
+//      }
+//      start=start+1;
+//      for (int i=start;i<=end;i++){
+//        if (s.charAt(i)==','){
+//          r=s.substring(start, i);
+//          //System.out.println(r.compareTo(word));
+//          if (r.compareTo(word)!=0){
+//            result.add(r);
+//          }
+//          start=i+1;
+//        }
+//      }
+//      r=s.substring(start,end);
+//      if (r.compareTo(word)!=0){
+//        result.add(r);
+//      }
+//    }
+//    return result;
+//  }
   
 //  public static void main (String args[]){
 //    String m="be";

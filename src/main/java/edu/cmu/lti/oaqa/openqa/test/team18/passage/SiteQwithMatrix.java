@@ -25,7 +25,14 @@ import edu.cmu.lti.oaqa.openqa.hello.passage.PassageCandidateFinder;
 import edu.cmu.lti.oaqa.openqa.test.team18.passage.SiteQwithMatrix.PassageSpan;
 import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.GoParser;
 import edu.cmu.lti.oaqa.openqa.test.team18.retrieval.NihParser;
-
+/**
+ * 
+ * @author Haohan Wang
+ * implementation of siteQ with matrix of keyterms
+ * siteQ is from TREC10
+ * the matrix reflects different weight for weight from concept level and word level from TREC2006
+ * and some our own trials to improve MAP
+ */
 public class SiteQwithMatrix {
   private String text;
 
@@ -33,44 +40,30 @@ public class SiteQwithMatrix {
 
   private int textSize; // values for the entire text
 
-  private int totalMatches;
-
-  private int totalKeyterms;
-
-  private KeytermWindowScorer scorer;
-
   public SiteQwithMatrix(String docId, String text, KeytermWindowScorer scorer) {
     super();
     this.text = text;
     this.docId = docId;
     this.textSize = text.length();
-    this.scorer = scorer;
   }
 
   @SuppressWarnings("unchecked")
+  /**
+   * extractPassages
+   * 
+   * @param keytermM
+   * input is a matrix of Keyterm
+   * each line of the matrix maitain the same concept of Keyterm, i.e. the synonyms of each keyterm
+   * each line is ordered as the weight of keyterm
+   * each row of each line is the keyterms of same concept, listed in tho order of weight
+   * 
+   * @return the extracted List of PassageCandidate
+   * the rusult is sorted by a score
+   * The score is mainly implemented with SiteQ, with weights of concept and word. 
+   * Also with my modifications explained in detail in below
+   * 
+   */
   public List<PassageCandidate> extractPassages(List<List<String>> keytermM) {
-    // List<List<PassageSpan>> matchingSpans = new ArrayList<List<PassageSpan>>();
-    // List<PassageSpan> matchedSpans = new ArrayList<PassageSpan>();
-    // List<List<String>> keytermM = getSynonyms(keyterms);
-    for (List<String> ls : keytermM) {
-      for (String s : ls) {
-        System.out.println(s);
-      }
-    }
-    // for (String keyterm : keyterms) {
-    // Pattern p = Pattern.compile(keyterm);
-    // Matcher m = p.matcher(text);
-    // while (m.find()) {
-    // PassageSpan match = new PassageSpan(m.start(), m.end());
-    // matchedSpans.add(match);
-    // totalMatches++;
-    // }
-    // if (!matchedSpans.isEmpty()) {
-    // matchingSpans.add(matchedSpans);
-    // totalKeyterms++;
-    // }
-    // }
-
     // create set of left edges and right edges which define possible windows.
     List<Integer> leftEdges = new ArrayList<Integer>();
     List<Integer> rightEdges = new ArrayList<Integer>();
@@ -86,20 +79,7 @@ public class SiteQwithMatrix {
       if (!rightEdges.contains(rightEdge))
         rightEdges.add(rightEdge);
     }
-    // Generate all the passagespans
-    // passagespans are divided by keyterms
-    // for ( List<PassageSpan> keytermMatches : matchingSpans ) {
-    // for ( PassageSpan keytermMatch : keytermMatches ) {
-    // Integer leftEdge = keytermMatch.begin;
-    // Integer rightEdge = keytermMatch.end;
-    // if (! leftEdges.contains( leftEdge ))
-    // leftEdges.add( leftEdge );
-    // if (! rightEdges.contains( rightEdge ))
-    // rightEdges.add( rightEdge );
-    // }
-    // }
-    // For every possible window, calculate keyterms found, matches found; score window, and create
-    // passage candidate.
+    // For every possible window, start to calculate
     List<PassageCandidate> result = new ArrayList<PassageCandidate>();
     for (Integer begin : leftEdges) {
       // end cannot be smaller than great
@@ -109,14 +89,18 @@ public class SiteQwithMatrix {
         // In the retrieved passage, a window greater than 500 characters is rarely seen
         if (end - begin > 500)
           continue;
-        // System.out.println(begin+" "+end);
         String textLine = text.substring(begin, end);
+        //replace the html tags with useful information like Greek characters in the format of .gif with text of Greek characters
+        //traditional parser cannot do this
         textLine = replaceDotGif(textLine);
+        //clean html tags
         String temp = Jsoup.parse(textLine).text().replaceAll("([\177-\377\0-\32]*)", "")/* .trim() */;
         textLine = temp;
         List<KeytermHit> khl = new ArrayList<KeytermHit>();
-        List<KeytermHit> khl2 = new ArrayList<KeytermHit>();
-        float hitNumber = 0;
+        float hitNumber = 0;//the times of the keyterm matched for each concept
+        //match the keyterm
+        //for each matched keyterm, store it in a list of KeytermHit with the useful information: offset and weight
+        //for each concept, maintain the increase of hitNumber
         for (int i = 0; i <= keytermM.size() - 1; i++) {
           boolean find = false;
           for (int j = 0; j <= keytermM.get(i).size() - 1; j++) {
@@ -125,26 +109,18 @@ public class SiteQwithMatrix {
             Matcher m = p.matcher(textLine);
             while (m.find()) {
               find = true;
-              // boolean addin = true;
               KeytermHit kh = new KeytermHit(m.start(), m.end(), i + 1, j + 1);
               khl.add(kh);
-              // for (KeytermHit ke: khl2){
-              // if (ke.line==kh.line&&ke.row==kh.row){
-              // addin=false;
-              // }
-              // }
-              // if (addin){
-              // khl2.add(kh);
-              // }
             }
           }
           if (find) {
             hitNumber += 1;
           }
         }
-        if (hitNumber > 1) {
-          double avgE = 0, totalE = 0, maxE = 0;
-          double avgB = 0, totalB = 0, maxB = 0;
+        if (hitNumber > 1) { // a passage can be a candidate only at least two concepts are matched
+          //mainly implementation for SiteQ with modification
+          double avgE = 0, totalE = 0, maxE = 0; //E means the distance of each mateched keyterm
+          double avgB = 0, totalB = 0, maxB = 0; //B means the distance of matched keyterm to the begin of this candidate answer
           double hitsize = khl.size();
           for (int i = 0; i <= khl.size() - 1; i++) {
             int b1 = khl.get(i).begin;
@@ -162,48 +138,27 @@ public class SiteQwithMatrix {
           }
           avgE = totalE / hitsize;
           avgB = totalB / hitsize;
-          double sigmaD = 0;
+          double sigmaD = 0; //sigmaD is the sigma of the weighted quoation of distance of this keyterm to the begin of candidate.
           for (int i = 0; i <= khl.size() - 1; i++) {
             double b = khl.get(i).begin;
             double r = khl.get(i).row;
             double l = khl.get(i).line;
-            double w2 = keytermM.size() + 5;
             double w = (100 / r + 1 / l);
             double textLength = textLine.length();
             sigmaD += (w / (textLength)) * (1 - (b - begin) / avgB);
+            //the weight is calculated with a combination of concept weight and word weight divided by the length of each candidate
+            //this is different from SiteQ, but somehow, gives a better performance
           }
-          double sigmaE = 0;
-          double [] sigmaF= {1000,1000,1000,1000,1000,1000,1000,1000,1000,1000};
-          double dis = 0;
-          for (int i = 0; i <= khl.size() - 1; i++) {
-            for (int j = i + 1; j <= khl.size() - 1; j++) {
-              int sRow = khl.get(i).row;
-              if (sRow != khl.get(j).row&&sRow<10) {
-                dis = Math.abs(khl.get(i).begin - khl.get(j).begin);
-                if (sigmaF[sRow] > dis) {
-                  sigmaF[sRow] = dis;
-                }
-              }
-            }
-          }
-          for (int i=0;i<=9;i++){
-            if (sigmaF[i]!=1000){
-              sigmaE+=sigmaF[i];
-            }
-          }
+
           double keytermMsize = keytermM.size();
           hitNumber = hitNumber - 1;
+          //rp should be the all matched keyterm divided by all the keyterms
+          //we increase the impact of concept hit of the keyterm
+          //and ignore the word weight
           double rp = Math.pow(hitNumber, 3) / keytermMsize;
           double khlsize = khl.size();
+          //final score is calculated by all the params
           double scoreMatrix = (rp * (avgE / maxE) * (1 / khlsize) * (sigmaD));
-                  /// (sigmaE);
-          System.out.println("rp" + rp);
-          System.out.println("avgE" + avgE);
-          System.out.println("maxE" + maxE);
-          System.out.println("khlsize" + khlsize);
-          System.out.println("sigmaD" + (sigmaD));
-          System.out.println("sigmaE" + sigmaE);
-          System.out.println("scoreM" + scoreMatrix);
           PassageCandidate window = null;
           try {
             window = new PassageCandidate(docId, begin, end, (float) scoreMatrix, null);
@@ -214,10 +169,14 @@ public class SiteQwithMatrix {
         }
       }
     }
+    //sorted the result
     Collections.sort(result, new PassageCandidateComparator());
     return result;
   }
-
+  /**
+   * the default class of PassageCandidateComparator
+   * 
+   */
   private class PassageCandidateComparator implements Comparator {
     // Ranks by score, decreasing.
     public int compare(Object o1, Object o2) {
@@ -231,7 +190,10 @@ public class SiteQwithMatrix {
       return 0;
     }
   }
-
+  /**
+   * default class of PassageSpan
+   *
+   */
   class PassageSpan {
     private int begin, end;
 
@@ -264,7 +226,13 @@ public class SiteQwithMatrix {
       }
     }
   }
-
+  /**
+   * class KeytermHit
+   * @author Haohan Wang
+   * this class is a structure to restore the information of a matched Keyterm
+   * the information are the offset(begin, end) of this keyterm in the target sentence
+   * and the concept weight(row) and word weight(line) of this keyterm
+   */
   class KeytermHit {
     private int begin, end;
 
@@ -278,13 +246,13 @@ public class SiteQwithMatrix {
     }
   }
 
-  public static void main(String[] args) {
-    String a = "number of <IMG SRC=\"/math/12pt/normal/beta.gif\" ALIGN=BOTTOM ALT=\"beta \">-sheets and a diminished <IMG160 5360 6172 eases,<SUP> </SUP>among them Creutzfeldt&#150;Jakob disease (CJD) of man, bovine<SUP> </SUP>spongiform encephalopathy (BSE) and scrapie of sheep (see reviews<SUP> </SUP>by Prusiner, 1998";
-    SiteQwithMatrix sqm = new SiteQwithMatrix(a, a, null);
-    String b = sqm.replaceDotGif(a);
-    System.out.println(b);
-  }
-
+  /**
+   * getPassageSentences
+   * 
+   * this function is called to return the PassageSpan of divided by natural sentences and semisentences.
+   * in html form, it also return the span divided by html tags
+   * @return a list of PassageSpan
+   */
   public List<PassageSpan> getPassageSentences() {
     List<PassageSpan> span = new ArrayList<PassageSpan>();
     int i = 0, j = 1;
@@ -300,15 +268,27 @@ public class SiteQwithMatrix {
       }
       j++;
     }
+    //the last span needs to be generated out of the loop
     PassageSpan a = new PassageSpan(i, textSize - 1);
     span.add(a);
     return span;
   }
-
+  /**
+   * replaceDotGif
+   * this function is called to replace the meaningful html tags with texts
+   * traditional parser will leave these information out
+   * 
+   * @param text
+   * input is a string with html tags
+   * 
+   * @return String
+   * output is a string, all the html tags with useful information in .gif format are extracted
+   */
   public String replaceDotGif(String text) {
     String result = text;
     Pattern p = Pattern.compile(".gif");
     Matcher m = p.matcher(text);
+    //not necessary to add all the Greek characters into this dict based on the resource
     String[] dict = { "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota",
         "kappa", "lambda", "sigma" };
     int s = 0, e = 0;
@@ -345,52 +325,4 @@ public class SiteQwithMatrix {
     }
     return result;
   }
-
-  // public List<List<String>> getSynonyms(String[] keyterms) {
-  // List<List<String>> result = new ArrayList<List<String>>();
-  // for (String k : keyterms) {
-  // List<String> kl = new ArrayList<String>();
-  // List<String> nk = new ArrayList<String>();
-  // List<String> r = new ArrayList<String>();
-  // kl.add(k);
-  // k = k.toLowerCase();
-  // try {
-  // GoParser gp = new GoParser("src/main/resources/dict/synonym.xml");
-  // r = gp.findAllSynonyms(k);
-  // for (String s : r) {
-  // nk.add(s);
-  // }
-  // } catch (ParserConfigurationException e) {
-  // e.printStackTrace();
-  // } catch (SAXException e) {
-  // e.printStackTrace();
-  // } catch (IOException e) {
-  // e.printStackTrace();
-  // }
-  // try {
-  // NihParser np = new NihParser("src/main/resources/dict/nih.txt");
-  // r = np.findSynonyms(k);
-  // for (String s : r) {
-  // nk.add(s);
-  // }
-  // } catch (IOException e) {
-  // e.printStackTrace();
-  // }
-  // boolean exist = false;
-  // for (String s1 : nk) {
-  // exist = false;
-  // for (String s2 : kl) {
-  // if (s1.equals(s2) || s1.contains("\\")) {
-  // exist = true;
-  // break;
-  // }
-  // }
-  // if (!exist) {
-  // kl.add(s1);
-  // }
-  // }
-  // result.add(kl);
-  // }
-  // return result;
-  // }
 }
