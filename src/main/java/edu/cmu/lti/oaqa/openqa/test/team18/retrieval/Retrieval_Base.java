@@ -239,13 +239,13 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
       for (SolrDocument doc : docs) {
     	
     	
-    	System.out.println("Fields");
+    	//System.out.println("Fields");
     	
     	Collection<String> fields = doc.getFieldNames();
     	Iterator<String> iter = fields.iterator();
     	while(iter.hasNext()){
     		String f = iter.next();
-    		System.out.println(f);
+    		//System.out.println(f);
     	}
     	  
     	
