@@ -19,11 +19,11 @@ public class WordNetImpl {
     
     if(OS.indexOf("win") >= 0)
     {
-      System.setProperty("wordnet.database.dir", "./src/main/resources/lexicon/dict/");
+      System.setProperty("wordnet.database.dir", "lexicon/dict/");
     }
     else
     {
-      System.setProperty("wordnet.database.dir", "src/main/resources/lexicon/dict");
+      System.setProperty("wordnet.database.dir", "lexicon/dict");
     }
     
 

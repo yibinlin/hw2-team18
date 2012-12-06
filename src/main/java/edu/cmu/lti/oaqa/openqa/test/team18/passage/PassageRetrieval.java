@@ -94,7 +94,7 @@ public class PassageRetrieval extends SimplePassageExtractor {
       kl.add(k);
       k = k.toLowerCase();
       try {
-        GoParser gp = new GoParser("src/main/resources/dict/synonym.xml");
+        GoParser gp = new GoParser("dict/synonym.xml");
         r = gp.findAllSynonyms(k);
         for (String s : r) {
           nk.add(s);
@@ -107,7 +107,7 @@ public class PassageRetrieval extends SimplePassageExtractor {
         e.printStackTrace();
       }
       try {
-        NihParser np = new NihParser("src/main/resources/dict/nih.txt");
+        NihParser np = new NihParser("dict/nih.txt");
         r = np.findSynonyms(k);
         for (String s : r) {
           nk.add(s);

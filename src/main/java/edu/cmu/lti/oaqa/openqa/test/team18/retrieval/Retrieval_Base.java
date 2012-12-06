@@ -71,7 +71,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
               .getConfigParameterValue("hit-list-size"));
     }
     try {
-		this.goParser = new GoParser("src/main/resources/dict/synonym.xml");
+		this.goParser = new GoParser("dict/synonym.xml");
 		System.out.println("Go Parser loaded~");
 	} catch (ParserConfigurationException e1) {
 		// TODO Auto-generated catch block
@@ -80,11 +80,11 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
 	} catch (IOException e1) {
-		// TODO Auto-generated catch block
+		//                      
 		e1.printStackTrace();
 	}
     try {
-		this.nihParser = new NihParser("src/main/resources/dict/nih.txt");
+		this.nihParser = new NihParser("dict/nih.txt");
 		System.out.println("Nih Parser loaded~");
 	} catch (IOException e1) {
 		// TODO Auto-generated catch block
@@ -252,7 +252,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
     	RetrievalResult r = new RetrievalResult((String) doc.getFieldValue("id"),
                 (Float) doc.getFieldValue("score"), query);
         result.add(r);
-        //System.out.println(doc.getFieldValue("id"));
+        System.out.println(doc.getFieldValue("id"));
       }
     } catch (Exception e) {
       System.err.println("Error retrieving documents from Solr: " + e);

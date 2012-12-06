@@ -15,7 +15,7 @@ public class GoldenStandard extends AbstractKeytermExtractor{
     List<Keyterm> kl = new ArrayList<Keyterm>();
     BufferedReader ar = null;
     try {
-      ar = new BufferedReader(new FileReader("./src/main/resources/input/back.txt"));
+      ar = new BufferedReader(new FileReader("input/back.txt"));
     } catch (FileNotFoundException e3) {
       // TODO Auto-generated catch block
       e3.printStackTrace();

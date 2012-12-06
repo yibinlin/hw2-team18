@@ -37,7 +37,7 @@ public class LingPipeNER extends KeytermCandidateFinder{
       // from lingpipe
       // import the trained data, biogenetag data
       chunker = (ConfidenceChunker) AbstractExternalizable.readObject(new File(
-              "src/main/resources/model/ne-en-bio-genetag.HmmChunker"));
+              "model/ne-en-bio-genetag.HmmChunker"));
     } catch (IOException e) {
       e.printStackTrace();
     } catch (ClassNotFoundException e) {

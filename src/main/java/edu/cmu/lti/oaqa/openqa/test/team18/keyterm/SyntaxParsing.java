@@ -41,7 +41,7 @@ public class SyntaxParsing extends KeytermCandidateFinder {
   /**
    * The unigram file path.
    */
-  private static final String UNIGRAM_PATH = "src/main/resources/lexicon/cmudict.0.7a.gigaword.freq";
+  private static final String UNIGRAM_PATH = "lexicon/cmudict.0.7a.gigaword.freq";
 
   /**
    * list of word with counts.

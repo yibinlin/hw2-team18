@@ -41,7 +41,7 @@ public class ShowPassageResult extends SimplePassageExtractor {
 //     e5.printStackTrace();
 //     }
 
-    File file = new File("./src/main/resources/gs/passageresult.txt");
+    File file = new File("gs/passageresult.txt");
     try {
       fos = new FileOutputStream(file);
     } catch (FileNotFoundException e4) {
@@ -76,7 +76,7 @@ public class ShowPassageResult extends SimplePassageExtractor {
     // System.out.println(no);
     BufferedReader br = null;
     try {
-      br = new BufferedReader(new FileReader("./src/main/resources/gs/trecgen06.passage"));
+      br = new BufferedReader(new FileReader("gs/trecgen06.passage"));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
