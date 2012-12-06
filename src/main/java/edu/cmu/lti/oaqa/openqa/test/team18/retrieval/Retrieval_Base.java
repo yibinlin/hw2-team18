@@ -240,20 +240,20 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
       for (SolrDocument doc : docs) {
     	
     	
-    	System.out.println("Fields");
+    	//System.out.println("Fields");
     	
     	Collection<String> fields = doc.getFieldNames();
     	Iterator<String> iter = fields.iterator();
     	while(iter.hasNext()){
     		String f = iter.next();
-    		System.out.println(f);
+    		//System.out.println(f);
     	}
     	  
     	
     	RetrievalResult r = new RetrievalResult((String) doc.getFieldValue("id"),
                 (Float) doc.getFieldValue("score"), query);
         result.add(r);
-        System.out.println(doc.getFieldValue("id"));
+        //System.out.println(doc.getFieldValue("id"));
       }
     } catch (Exception e) {
       System.err.println("Error retrieving documents from Solr: " + e);
