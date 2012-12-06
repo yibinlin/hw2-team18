@@ -57,7 +57,6 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
   protected WikiRedirectParser wikiParser;
   private List<Keyterm> keyterms;
 
-  @Override
 	 /**
 	   * Initialize parsers
 	   *
