@@ -18,7 +18,7 @@ import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
 /**
  * 
- * @deprecated no longer used in our CSE pipeline
+ * @deprecated no longer used in our CSE pipeline, part of hw1.
  * @author Yibin Lin
  *
  */

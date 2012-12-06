@@ -13,7 +13,7 @@ import edu.cmu.lti.oaqa.cse.basephase.keyterm.AbstractKeytermExtractor;
 import edu.cmu.lti.oaqa.framework.data.Keyterm;
 
 /**
- * @deprecated no longer used in our cse pipeline.
+ * @deprecated no longer used in our cse pipeline, part of hw1.
  * @author Haohan Wang
  *
  */

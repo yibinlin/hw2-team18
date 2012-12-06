@@ -85,10 +85,11 @@ public class LingPipeNER extends KeytermCandidateFinder{
   }
   
   /**
-   * filter candidate string, it will return true if and only if:
-   * 1. The string contains any parenthesis
-   * 2. The string starts with a special character.
-   * 3. The string ends with a special character. 
+   * filter candidate string, it will return true if and only if: <br>
+   * 
+   * 1. The string contains any parenthesis <br>
+   * 2. The string starts with a special character. <br>
+   * 3. The string ends with a special character. <br>
    * 
    * @param string the string candidate
    * @return true if the string is better considered to be filtered.
