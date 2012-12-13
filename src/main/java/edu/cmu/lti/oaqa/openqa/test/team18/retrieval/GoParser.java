@@ -78,16 +78,16 @@ public class GoParser {
 	
 	 /**
 	   * Constructor function 
-	   * @param Filename
-	   *          filepath that points to the synonyms.xml
+	   * @param filuri
+	   *          file uri that points to the synonyms.xml
 	   * @return Return the constructed dictionary using buildDictionary.
 	   */
 	
-	public GoParser (String filename) throws ParserConfigurationException, SAXException, IOException{
+	public GoParser (String fileuri) throws ParserConfigurationException, SAXException, IOException{
 		
         DocumentBuilderFactory dfb = DocumentBuilderFactory.newInstance();  
         DocumentBuilder db = dfb.newDocumentBuilder();
-        Document dom = db.parse(new File(filename));
+        Document dom = db.parse(this.getClass().getResourceAsStream(fileuri));
         this.synonymDictionary = buildDictionary(dom);
 	}
 	

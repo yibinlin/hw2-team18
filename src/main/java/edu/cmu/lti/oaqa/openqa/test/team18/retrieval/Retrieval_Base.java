@@ -71,7 +71,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
               .getConfigParameterValue("hit-list-size"));
     }
     try {
-		this.goParser = new GoParser("dict/synonym.xml");
+		this.goParser = new GoParser("/dict/synonym.xml");
 		System.out.println("Go Parser loaded~");
 	} catch (ParserConfigurationException e1) {
 		// TODO Auto-generated catch block
@@ -84,7 +84,7 @@ public class Retrieval_Base extends AbstractRetrievalStrategist {
 		e1.printStackTrace();
 	}
     try {
-		this.nihParser = new NihParser("dict/nih.txt");
+		this.nihParser = new NihParser("/dict/nih.txt");
 		System.out.println("Nih Parser loaded~");
 	} catch (IOException e1) {
 		// TODO Auto-generated catch block

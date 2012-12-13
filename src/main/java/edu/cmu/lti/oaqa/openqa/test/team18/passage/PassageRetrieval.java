@@ -107,7 +107,7 @@ public class PassageRetrieval extends SimplePassageExtractor {
         e.printStackTrace();
       }
       try {
-        NihParser np = new NihParser("dict/nih.txt");
+        NihParser np = new NihParser("/dict/nih.txt");
         r = np.findSynonyms(k);
         for (String s : r) {
           nk.add(s);

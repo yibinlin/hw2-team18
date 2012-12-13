@@ -1,9 +1,10 @@
 package edu.cmu.lti.oaqa.openqa.test.team18.keyterm;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,9 +40,10 @@ public class SyntaxParsing extends KeytermCandidateFinder {
   private Morphology morph;
 
   /**
-   * The unigram file path.
+   * The unigram (file) resource.
    */
-  private static final String UNIGRAM_PATH = "lexicon/cmudict.0.7a.gigaword.freq";
+  private final InputStream UNIGRAM_IS = this.getClass().getResourceAsStream(
+          "/lexicon/cmudict.0.7a.gigaword.freq");
 
   /**
    * list of word with counts.
@@ -49,7 +51,8 @@ public class SyntaxParsing extends KeytermCandidateFinder {
   private ArrayList<WordCount> wordCounts;
 
   /**
-   * Constructor, initialize StanfordCoreNLP and Morphology from StanfordCoreNLP, and load the sorted unigram counts. 
+   * Constructor, initialize StanfordCoreNLP and Morphology from StanfordCoreNLP, and load the
+   * sorted unigram counts.
    * 
    * @throws ResourceInitializationException
    */
@@ -59,8 +62,7 @@ public class SyntaxParsing extends KeytermCandidateFinder {
     props.put("annotators", "tokenize, ssplit, pos, parse");
     pipeline = new StanfordCoreNLP(props);
     morph = new Morphology();
-    File unigramf = new File(UNIGRAM_PATH);
-    buildWordCount(unigramf);
+    buildWordCount(UNIGRAM_IS);
   }
 
   /**
@@ -90,18 +92,20 @@ public class SyntaxParsing extends KeytermCandidateFinder {
   }
 
   /**
-   * Build a unigram word count from a unigram file
+   * Build a unigram word count from a unigram file resource
    * 
    * @param unigramf
+   *          InputStream object from the resource
+   * 
    */
-  private void buildWordCount(File unigramf) {
+  private void buildWordCount(InputStream unigramf) {
     this.wordCounts = new ArrayList<WordCount>();
 
-    FileReader fr;
+    InputStreamReader isr;
     try {
-      fr = new FileReader(unigramf);
+      isr = new InputStreamReader(unigramf);
 
-      BufferedReader br = new BufferedReader(fr);
+      BufferedReader br = new BufferedReader(isr);
       String strLine;
       while ((strLine = br.readLine()) != null) {
         strLine = strLine.replaceAll("\n", "");
@@ -145,7 +149,7 @@ public class SyntaxParsing extends KeytermCandidateFinder {
    * 
    * @param node
    *          current node we are searching, used in the recursive call.
-   *          
+   * 
    * @see filterCandidate
    */
   private void goThroughTree(Tree node) {
@@ -168,14 +172,13 @@ public class SyntaxParsing extends KeytermCandidateFinder {
   }
 
   /**
-   * The post processing of the strings. The problem arises when the StanfordCoreNLP 
-   * syntax parse separate the proper noun and the "'s" into two words, therefore creating an 
-   * empty space between them. The postprocessing method delete the gap between the proper noun 
-   * and the "'s".
+   * The post processing of the strings. The problem arises when the StanfordCoreNLP syntax parse
+   * separate the proper noun and the "'s" into two words, therefore creating an empty space between
+   * them. The postprocessing method delete the gap between the proper noun and the "'s".
    * 
-   * @param s the string that is guessed to be a keyterm.
-   * @return it now deletes the possession form, e.g: "the student 's", will be
-   * "the student's". 
+   * @param s
+   *          the string that is guessed to be a keyterm.
+   * @return it now deletes the possession form, e.g: "the student 's", will be "the student's".
    */
   private String postprocessing(String s) {
     s = s.replaceAll(" 's", "'s");
@@ -183,17 +186,16 @@ public class SyntaxParsing extends KeytermCandidateFinder {
   }
 
   /**
-   * filter candidate string, it will return true if and only if: <br> 
+   * filter candidate string, it will return true if and only if: <br>
    * 
-   * 1. the string is a VBP and is a form of do and be.<br> 
+   * 1. the string is a VBP and is a form of do and be.<br>
    * 
-   * 2. the string contains parenthesis (because if it is a word inside the
-   * parenthesis, it should be only the word without parenthesis, and it will be captured by the
-   * LingPipe tagger. Or it should be a phrase that contains part or all of the parenthesis,
-   * therefore not a legitimate keyterm candidate, because none of the gold standard contains
-   * parenthesis). <br> 
+   * 2. the string contains parenthesis (because if it is a word inside the parenthesis, it should
+   * be only the word without parenthesis, and it will be captured by the LingPipe tagger. Or it
+   * should be a phrase that contains part or all of the parenthesis, therefore not a legitimate
+   * keyterm candidate, because none of the gold standard contains parenthesis). <br>
    * 
-   * 3. the string starts with a special character <br> 
+   * 3. the string starts with a special character <br>
    * 
    * 4. the string ends with a special character. <br>
    * 
@@ -232,12 +234,11 @@ public class SyntaxParsing extends KeytermCandidateFinder {
     // if it is a single token, and it is a noun, then we check whether it is a frequent word.
     {
       return true;
-    } else if (node.label().value().startsWith("NN") && candidateContains(string))
-    {
+    } else if (node.label().value().startsWith("NN") && candidateContains(string)) {
       return true;
     }
 
-      return false;
+    return false;
 
   }
 
@@ -290,7 +291,8 @@ public class SyntaxParsing extends KeytermCandidateFinder {
    * @return true if the category is what we wanted, false if no.
    */
   private boolean checkCategory(String label) {
-    if (label.equalsIgnoreCase("NP") || label.equalsIgnoreCase("VBP") || label.equalsIgnoreCase("VB")) {
+    if (label.equalsIgnoreCase("NP") || label.equalsIgnoreCase("VBP")
+            || label.equalsIgnoreCase("VB")) {
       return true;
     } else if (label.equalsIgnoreCase("NN") || label.equalsIgnoreCase("NNS")) // lexical
     {
@@ -321,7 +323,8 @@ public class SyntaxParsing extends KeytermCandidateFinder {
       }
     } else {
       if (node.label().value().equalsIgnoreCase("DT")
-              || node.label().value().equalsIgnoreCase("IN") || node.label().value().equalsIgnoreCase("PRP")) {
+              || node.label().value().equalsIgnoreCase("IN")
+              || node.label().value().equalsIgnoreCase("PRP")) {
         return false;
       }
       Tree[] children = node.children();
